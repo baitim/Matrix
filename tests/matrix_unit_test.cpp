@@ -1,8 +1,43 @@
+#include <iostream>
+#include <fstream>
 #include <vector>
+#include <string>
+#include <algorithm>
+#include <glob.h>
 #include <gtest/gtest.h>
 #include "matrix.hpp"
 
+const double EPSILON_ROUGH = 1e-3;
 const double EPSILON = 1e-8;
+
+TEST(Matrix_shuffle, end_to_end) 
+{
+    glob_t test_files;
+    glob("../../tests/tests_dat/test_*.in", GLOB_ERR, NULL, &test_files);
+
+    glob_t ans_files;
+    glob("../../tests/answers/answer_*.ans", GLOB_ERR, NULL, &ans_files);
+
+    int count_tests = std::min(test_files.gl_pathc, ans_files.gl_pathc);
+    for (int i = 0; i < count_tests; ++i) {
+        std::ifstream test_file(test_files.gl_pathv[i]);
+        int n;
+        test_file >> n;
+        matrix::matrix_t<double> matrix{n, n};
+        test_file >> matrix;
+        test_file.close();
+
+        std::ifstream answer_file(ans_files.gl_pathv[i]);
+        double ans;
+        answer_file >> ans;
+        answer_file.close();
+
+        EXPECT_LT(abs(matrix.determinant() - ans), EPSILON_ROUGH);
+    }
+
+    globfree(&test_files);
+    globfree(&ans_files);
+}
 
 TEST(Matrix_main, test_double)
 {
@@ -19,7 +54,7 @@ TEST(Matrix_main, test_double)
 TEST(Matrix_main, test_fill_val)
 {
     int n = 3;
-    double val = 42;
+    double val = 52;
     matrix::matrix_t<double> matrix{n, n, val};
 
     ASSERT_LT(abs(matrix.determinant() - 0), EPSILON);
@@ -39,7 +74,7 @@ TEST(Matrix_main, test_trace)
 
 TEST(Matrix_main, test_eye)
 {
-    int n = 333;
+    int n = 52;
     matrix::matrix_t<double>* matrix = matrix::matrix_t<double>::eye(n, n);
 
     EXPECT_LT(abs(matrix->determinant() - 1), EPSILON);

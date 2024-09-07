@@ -2,12 +2,12 @@ import random
 import math
 
 count_tests = 10
-max_determinant = 100000
+max_determinant = 1000000
 
 for test_num in range(count_tests) :
     #prepare
-    N = random.randint(70, 100)
-    shuffle_steps = N * int(math.sqrt(N))
+    N = random.randint(100, 200)
+    shuffle_steps = N * int(math.sqrt(N)) // 2
     NN = N * N
     matrix = [0] * NN
 
@@ -17,8 +17,8 @@ for test_num in range(count_tests) :
         determinant *= -1
 
     part_det = abs(determinant) ** (1 / N)
-    min_elem = part_det - part_det * 0.4
-    max_elem = part_det + part_det * 0.45
+    min_elem = part_det - part_det * 0.3
+    max_elem = part_det + part_det * 0.35
 
     last_elem = determinant
     for j in range(N-1) :
@@ -38,7 +38,7 @@ for test_num in range(count_tests) :
         while (row1 == row2) :
             row2 = random.randint(0, N - 1)
 
-        coef = random.uniform(0.5, 1.6)
+        coef = random.uniform(0.7, 1.37)
         if (random.randint(0, 1)) :
             coef *= -1
         

@@ -20,14 +20,10 @@
 
 ## How to test
 
-1. End to end <br>
-    write <code>cd tests/end_to_end</code> in terminal <br>
-    write <code>python3 generate.py</code> in terminal <br>
-    write <code>python3 run_tests.py</code> in terminal <br>
-    The test result will be in output
-
-2. Unit <br>
-    in root dir write <code>./build/tests/unit/unit_matrix</code> in terminal
+Unit tests:<br>
+write <code>cd tests</code> in terminal <br>
+write <code>python3 generate.py</code> in terminal <br>
+in root dir write <code>./build/tests/unit_matrix</code> in terminal
 
 <p align="center"><img src="https://github.com/baitim/Matrix/blob/main/images/cat.gif" width="40%"></p>
 
