@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include "matrix.hpp"
 
@@ -6,15 +7,10 @@ int main() {
 
     int n;
     std::cin >> n;
-    std::vector<double> elems(n * n);
 
-    for (int i = 0; i < n * n; ++i) {
-        std::cin >> elems[i];
-    }
+    matrix::matrix_t<double> matrix{n, n};
+    std::cin >> matrix;
 
-    matrix::matrix_t<double> matrix{n, elems};
-
-    std::cout << matrix.det() << "\n";
-
+    std::cout << std::fixed << std::setprecision(10) << matrix.determinant() << "\n";
     return 0;
 }
