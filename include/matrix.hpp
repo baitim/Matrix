@@ -90,10 +90,6 @@ namespace matrix {
             return matrix;
         }
 
-        ProxyRow& operator[](int n) {
-            return ProxyRow{elems_ + n * cols_};
-        }
-
         ProxyRow operator[](int n) const {
             return ProxyRow{elems_ + n * cols_};
         }
@@ -104,6 +100,19 @@ namespace matrix {
 
         int get_cols() const noexcept {
             return cols_;
+        }
+
+        template <typename ElemT2>
+        matrix_t(const matrix_t<ElemT2>& other) : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
+            int rows = other.get_rows();
+            int cols = other.get_cols();
+
+            for(int i = 0; i < rows; ++i) {
+                int row_shift_i = i * cols;
+                for (int j = 0; j < cols; ++j) {
+                    elems_[row_shift_i + j] = static_cast<ElemT>(other[i][j]);
+                }
+            }
         }
 
         ElemT trace() const noexcept {
@@ -128,16 +137,15 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    int row_shift_j = j * cols_;
-                    if (abs(calc_matrix.elems_[row_shift_j + i])
-                        > abs(calc_matrix.elems_[row_shift_j + pivot]))
+                    if (abs(calc_matrix[j][i])
+                        > abs(calc_matrix[j][pivot]))
                         pivot = j;
                 }
 
                 if (swap_rows(calc_matrix, i, pivot))
                     is_swapped = !is_swapped;
                 
-                if (calc_matrix.elems_[i * cols_ + i] == 0)
+                if (calc_matrix[i][i] == 0)
                     return 0;
 
                 simplify_rows(calc_matrix, i);
@@ -156,32 +164,30 @@ namespace matrix {
         if (a == b)
             return false;
 
-        int row_shift_a = a * calc_matrix.cols_;
-        int row_shift_b = b * calc_matrix.cols_;
-        for (int i = 0; i < calc_matrix.rows_; i++)
-            std::swap(calc_matrix.elems_[row_shift_a + i], calc_matrix.elems_[row_shift_b + i]);
+        int cols = calc_matrix.get_cols();
+        for (int i = 0; i < cols; i++)
+            std::swap(calc_matrix[a][i], calc_matrix[b][i]);
 
         return true;
     }
 
     template <typename ElemT>
     void matrix_t<ElemT>::simplify_rows(matrix_t<double>& calc_matrix, int i) {
-        int row_shift_i = i * calc_matrix.cols_;
-        for (int j = i + 1; j < calc_matrix.rows_; ++j) {
+        int rows = calc_matrix.get_rows();
+        int cols = calc_matrix.get_cols();
 
-            int row_shift_j = j * calc_matrix.cols_;
-            double coef = calc_matrix.elems_[row_shift_j + i] / calc_matrix.elems_[row_shift_i + i];
-
-            for (int k = 0; k < calc_matrix.cols_; ++k)
-                calc_matrix.elems_[row_shift_j + k] -= coef * calc_matrix.elems_[row_shift_i + k];
+        for (int j = i + 1; j < rows; ++j) {
+            double coef = calc_matrix[j][i] / calc_matrix[i][i];
+            for (int k = 0; k < cols; ++k)
+                calc_matrix[j][k] -= coef * calc_matrix[i][k];
         }
     }
 
     template <typename ElemT>
     double matrix_t<ElemT>::diag_mult(const matrix_t<double>& calc_matrix) const noexcept {
         double det = 1;
-        for (int i = 0, end = std::min(calc_matrix.rows_, calc_matrix.cols_); i < end; ++i)
-            det *= calc_matrix.elems_[i * calc_matrix.cols_ + i];
+        for (int i = 0, end = std::min(calc_matrix.get_rows(), calc_matrix.get_cols()); i < end; ++i)
+            det *= calc_matrix[i][i];
         return det;
     }
 

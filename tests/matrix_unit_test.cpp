@@ -80,6 +80,22 @@ TEST(Matrix_det, test_double)
     ASSERT_LT(abs(matrix.determinant() - (-0.036)), EPSILON);
 }
 
+TEST(Matrix_det, test_int)
+{
+    int n1 = 4;
+    int default_value = 15;
+    matrix::matrix_t<int> matrix1{n1, n1, default_value};
+
+    int n2 = 3;
+    std::vector<int> elems{7, 13, 3,
+                           4, 5,  17,
+                           9, 11, 10};
+
+    matrix::matrix_t<int> matrix2{n2, n2, elems.begin(), elems.end()};
+    ASSERT_LT(abs(matrix1.determinant() - 0), EPSILON);
+    ASSERT_LT(abs(matrix2.determinant() - 507), EPSILON);
+}
+
 TEST(Matrix_det, test_rectangle)
 {
     int n = 2, m = 3;
