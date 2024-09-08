@@ -1,7 +1,5 @@
-#include <iostream>
 #include <fstream>
 #include <vector>
-#include <string>
 #include <algorithm>
 #include <glob.h>
 #include <gtest/gtest.h>
@@ -80,4 +78,15 @@ TEST(Matrix_main, test_eye)
     EXPECT_LT(abs(matrix->determinant() - 1), EPSILON);
     EXPECT_LT(abs(matrix->trace() - n), EPSILON);
     delete matrix;
+}
+
+TEST(Matrix_main, test_rectangle)
+{
+    int n = 2, m = 3;
+    std::vector<double> elems{1.3, 1.2, 0.7,
+                              1.4, 1.6, 0.4};
+
+    matrix::matrix_t<double> matrix{n, m, elems.begin(), elems.end()};
+
+    ASSERT_LT(abs(matrix.determinant() - 0), EPSILON);
 }
