@@ -22,7 +22,7 @@ namespace matrix {
         ElemT* elems_;
 
         matrix_buf_t(int rows, int cols) : rows_(rows), cols_(cols) {
-            elems_ = new ElemT[rows_ * cols_];
+            elems_ = new ElemT[rows_ * cols_]{};
         }
 
         matrix_buf_t(const matrix_buf_t<ElemT>& other) : matrix_buf_t<ElemT>(other.rows_, other.cols_) {
@@ -57,6 +57,8 @@ namespace matrix {
         }
 
         ~matrix_buf_t() {
+            for (int i = 0, end = rows_ * cols_; i < end; ++i)
+                 elems_[i].~ElemT();
             delete [] elems_;
         }
     };
