@@ -88,7 +88,7 @@ namespace matrix {
     public:
         matrix_t(int rows, int cols) : matrix_buf_t<ElemT>(rows, cols) {}
 
-        matrix_t(int rows, int cols, ElemT val) : matrix_t<ElemT>(rows, cols) {
+        matrix_t(int rows, int cols, const ElemT& val) : matrix_t<ElemT>(rows, cols) {
             for (int i = 0, end = rows_ * cols_; i < end; ++i)
                 elems_[i] = val;
         }
@@ -98,13 +98,13 @@ namespace matrix {
             int i = 0;
             int end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
-                elems_[i] = *it;
+                elems_[i] = ElemT(*it);
         }
 
         static matrix_t<ElemT>* eye(int rows, int cols) {
             matrix_t<ElemT>* matrix = new matrix_t<ElemT>(rows, cols, 0);
             for (int i = 0, end = std::min(rows, cols); i < end; ++i)
-                matrix->elems_[i * cols + i] = 1;
+                matrix->elems_[i * cols + i] = ElemT(1);
             return matrix;
         }
 
@@ -125,7 +125,7 @@ namespace matrix {
             for(int i = 0; i < rows_; ++i) {
                 int row_shift_i = i * cols_;
                 for (int j = 0; j < cols_; ++j) {
-                    elems_[row_shift_i + j] = static_cast<ElemT>(other[i][j]);
+                    elems_[row_shift_i + j] = ElemT(other[i][j]);
                 }
             }
         }
