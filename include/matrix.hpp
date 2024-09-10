@@ -1,9 +1,20 @@
 #pragma once
 
 #include <cstring>
+#include <cmath>
 #include "ANSI_colors.hpp"
 
+const double EPSILON = 1e-8;
+
 namespace matrix {
+    bool is_double_equal(double a, double b) noexcept {
+        return (std::fabs(a - b) < EPSILON);
+    }
+
+    bool is_double_greater(double a, double b) noexcept {
+        return ((a - b) > EPSILON);
+    }
+
     template <typename ElemT> class matrix_buf_t {
     protected:
         int rows_;
@@ -30,7 +41,7 @@ namespace matrix {
         }
 
         matrix_buf_t(matrix_buf_t<ElemT>&& other) noexcept : rows_(other.rows_), cols_(other.cols_), 
-                                                            elems_(other.elems_) {
+                                                             elems_(other.elems_) {
             other.rows_ = other.cols_ = 0;
             other.elems_ = nullptr;
         }
@@ -66,6 +77,11 @@ namespace matrix {
                 return row[n];
             }
         };
+
+    private:
+        bool   swap_rows    (matrix_t<double>& calc_matrix, int a, int b) noexcept;
+        void   simplify_rows(matrix_t<double>& calc_matrix, int i);
+        double diag_mult    (const matrix_t<double>& calc_matrix) const noexcept;
 
     public:
         matrix_t(int rows, int cols) : matrix_buf_t<ElemT>(rows, cols) {}
@@ -104,12 +120,9 @@ namespace matrix {
 
         template <typename ElemT2>
         matrix_t(const matrix_t<ElemT2>& other) : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
-            int rows = other.get_rows();
-            int cols = other.get_cols();
-
-            for(int i = 0; i < rows; ++i) {
-                int row_shift_i = i * cols;
-                for (int j = 0; j < cols; ++j) {
+            for(int i = 0; i < rows_; ++i) {
+                int row_shift_i = i * cols_;
+                for (int j = 0; j < cols_; ++j) {
                     elems_[row_shift_i + j] = static_cast<ElemT>(other[i][j]);
                 }
             }
@@ -122,10 +135,6 @@ namespace matrix {
             return trace;
         }
 
-        bool   swap_rows    (matrix_t<double>& calc_matrix, int a, int b) noexcept;
-        void   simplify_rows(matrix_t<double>& calc_matrix, int i);
-        double diag_mult    (const matrix_t<double>& calc_matrix) const noexcept;
-
         double determinant() {
             if (cols_ != rows_)
                 return 0;
@@ -137,15 +146,15 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    if (abs(calc_matrix[j][i])
-                        > abs(calc_matrix[j][pivot]))
+                    if (is_double_greater(calc_matrix[j][i],
+                                          calc_matrix[j][pivot]))
                         pivot = j;
                 }
 
                 if (swap_rows(calc_matrix, i, pivot))
                     is_swapped = !is_swapped;
                 
-                if (calc_matrix[i][i] == 0)
+                if (is_double_equal(calc_matrix[i][i], 0))
                     return 0;
 
                 simplify_rows(calc_matrix, i);
@@ -185,8 +194,13 @@ namespace matrix {
 
     template <typename ElemT>
     double matrix_t<ElemT>::diag_mult(const matrix_t<double>& calc_matrix) const noexcept {
+        int rows = calc_matrix.get_rows();
+        int cols = calc_matrix.get_cols();
+        if (rows != cols)
+            return 0;
+
         double det = 1;
-        for (int i = 0, end = std::min(calc_matrix.get_rows(), calc_matrix.get_cols()); i < end; ++i)
+        for (int i = 0; i < rows; ++i)
             det *= calc_matrix[i][i];
         return det;
     }

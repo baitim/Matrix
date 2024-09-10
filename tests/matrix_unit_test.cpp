@@ -5,8 +5,7 @@
 #include <gtest/gtest.h>
 #include "matrix.hpp"
 
-const double EPSILON_ROUGH = 1e-3;
-const double EPSILON = 1e-8;
+static const double EPSILON_ROUGH = 1e-3;
 
 TEST(Matrix_shuffle, end_to_end) 
 {
@@ -30,7 +29,7 @@ TEST(Matrix_shuffle, end_to_end)
         answer_file >> ans;
         answer_file.close();
 
-        EXPECT_LT(abs(matrix.determinant() - ans), EPSILON_ROUGH);
+        EXPECT_LT(std::fabs(matrix.determinant() - ans), EPSILON_ROUGH);
     }
 
     globfree(&test_files);
@@ -43,7 +42,7 @@ TEST(Matrix_main, test_fill_val)
     double val = 52;
     matrix::matrix_t<double> matrix{n, n, val};
 
-    ASSERT_LT(abs(matrix.determinant() - 0), EPSILON);
+    ASSERT_LT(std::fabs(matrix.determinant() - 0), EPSILON);
 }
 
 TEST(Matrix_main, test_trace)
@@ -55,7 +54,7 @@ TEST(Matrix_main, test_trace)
 
     matrix::matrix_t<double> matrix{n, n, elems.begin(), elems.end()};
 
-    ASSERT_LT(abs(matrix.trace() - (1e0 + 1e4 + 1e8)), EPSILON);
+    ASSERT_LT(std::fabs(matrix.trace() - (1e0 + 1e4 + 1e8)), EPSILON);
 }
 
 TEST(Matrix_main, test_eye)
@@ -63,8 +62,8 @@ TEST(Matrix_main, test_eye)
     int n = 52;
     matrix::matrix_t<double>* matrix = matrix::matrix_t<double>::eye(n, n);
 
-    EXPECT_LT(abs(matrix->determinant() - 1), EPSILON);
-    EXPECT_LT(abs(matrix->trace() - n), EPSILON);
+    EXPECT_LT(std::fabs(matrix->determinant() - 1), EPSILON);
+    EXPECT_LT(std::fabs(matrix->trace() - n), EPSILON);
     delete matrix;
 }
 
@@ -77,7 +76,7 @@ TEST(Matrix_det, test_double)
 
     matrix::matrix_t<double> matrix{n, n, elems.begin(), elems.end()};
 
-    ASSERT_LT(abs(matrix.determinant() - (-0.036)), EPSILON);
+    ASSERT_LT(std::fabs(matrix.determinant() - (-0.036)), EPSILON);
 }
 
 TEST(Matrix_det, test_int)
@@ -92,8 +91,8 @@ TEST(Matrix_det, test_int)
                            9, 11, 10};
 
     matrix::matrix_t<int> matrix2{n2, n2, elems.begin(), elems.end()};
-    ASSERT_LT(abs(matrix1.determinant() - 0), EPSILON);
-    ASSERT_LT(abs(matrix2.determinant() - 507), EPSILON);
+    ASSERT_LT(std::fabs(matrix1.determinant() - 0), EPSILON);
+    ASSERT_LT(std::fabs(matrix2.determinant() - 507), EPSILON);
 }
 
 TEST(Matrix_det, test_rectangle)
@@ -104,7 +103,7 @@ TEST(Matrix_det, test_rectangle)
 
     matrix::matrix_t<double> matrix{n, m, elems.begin(), elems.end()};
 
-    ASSERT_LT(abs(matrix.determinant() - 0), EPSILON);
+    ASSERT_LT(std::fabs(matrix.determinant() - 0), EPSILON);
 }
 
 TEST(Matrix_det, test_det_cleanness)
@@ -117,7 +116,7 @@ TEST(Matrix_det, test_det_cleanness)
     matrix::matrix_t<double> matrix{n, n, elems.begin(), elems.end()};
     matrix::matrix_t<double> matrix2 = matrix;
 
-    ASSERT_LT(abs(matrix.determinant() - (-3.075)), EPSILON);
+    ASSERT_LT(std::fabs(matrix.determinant() - (-3.075)), EPSILON);
     ASSERT_EQ((matrix == matrix2), 1);
 }
 
@@ -137,7 +136,7 @@ TEST(Matrix_raii, test_copy_assign_ctor)
         matrix = matrix2;
     }
 
-    ASSERT_LT(abs(matrix.determinant() - (-3.075)), EPSILON);
+    ASSERT_LT(std::fabs(matrix.determinant() - (-3.075)), EPSILON);
 }
 
 TEST(Matrix_raii, test_move_assign_ctor)
@@ -154,6 +153,6 @@ TEST(Matrix_raii, test_move_assign_ctor)
 
     matrix::swap(matrix1, matrix2);
 
-    ASSERT_LT(abs(matrix1.determinant() - (-3.075)), EPSILON);
-    ASSERT_LT(abs(matrix2.determinant() - 0), EPSILON);
+    ASSERT_LT(std::fabs(matrix1.determinant() - (-3.075)), EPSILON);
+    ASSERT_LT(std::fabs(matrix2.determinant() - 0), EPSILON);
 }
