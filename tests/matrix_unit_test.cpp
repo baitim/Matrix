@@ -6,6 +6,7 @@
 #include "matrix.hpp"
 
 static const double EPSILON_ROUGH = 1e-3;
+static const double EPSILON       = 1e-8;
 
 TEST(Matrix_shuffle, end_to_end) 
 {

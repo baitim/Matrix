@@ -3,18 +3,9 @@
 #include <cstring>
 #include <cmath>
 #include "ANSI_colors.hpp"
-
-const double EPSILON = 1e-8;
+#include "doubles.hpp"
 
 namespace matrix {
-    bool is_double_equal(double a, double b) noexcept {
-        return (std::fabs(a - b) < EPSILON);
-    }
-
-    bool is_double_greater(double a, double b) noexcept {
-        return ((a - b) > EPSILON);
-    }
-
     template <typename ElemT> class matrix_buf_t {
     protected:
         int rows_;
@@ -148,15 +139,15 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    if (is_double_greater(calc_matrix[j][i],
-                                          calc_matrix[j][pivot]))
+                    if (doubles::is_double_greater(calc_matrix[j][i],
+                                                   calc_matrix[j][pivot]))
                         pivot = j;
                 }
 
                 if (swap_rows(calc_matrix, i, pivot))
                     is_swapped = !is_swapped;
                 
-                if (is_double_equal(calc_matrix[i][i], 0))
+                if (doubles::is_double_equal(calc_matrix[i][i], 0))
                     return 0;
 
                 simplify_rows(calc_matrix, i);
