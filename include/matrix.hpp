@@ -10,7 +10,9 @@ namespace matrix {
     protected:
         int rows_;
         int cols_;
-        ElemT* elems_;
+        ElemT* elems_; // less news &
+                       //  number of elems in row is constant &
+                       //  can precalculate shift of rows index like shift_i = i * N, then m[i_shift + j]
 
         matrix_buf_t(int rows, int cols) : rows_(rows), cols_(cols) {
             elems_ = new ElemT[rows_ * cols_]{};
@@ -54,7 +56,14 @@ namespace matrix {
         }
     };
 
-    template <typename ElemT> class matrix_t final : private matrix_buf_t<ElemT> {
+    template <typename ElemT>
+    class matrix_t;
+
+    template <typename ElemT>
+    bool swap_rows(matrix_t<ElemT>& matrix, int a, int b) noexcept;
+
+    template <typename ElemT>
+    class matrix_t final : private matrix_buf_t<ElemT> {
         using matrix_buf_t<ElemT>::rows_;
         using matrix_buf_t<ElemT>::cols_;
         using matrix_buf_t<ElemT>::elems_;
@@ -72,7 +81,6 @@ namespace matrix {
         };
 
     private:
-        bool   swap_rows    (matrix_t<double>& calc_matrix, int a, int b) noexcept;
         void   simplify_rows(matrix_t<double>& calc_matrix, int i);
         double diag_mult    (const matrix_t<double>& calc_matrix) const noexcept;
 
@@ -85,7 +93,7 @@ namespace matrix {
         }
 
         template <typename It>
-        matrix_t(int rows, int cols, It start, It fin) : matrix_t<ElemT>(rows, cols, 0) {
+        matrix_t(int rows, int cols, It start, It fin) : matrix_t<ElemT>(rows, cols) {
             int i = 0;
             int end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
@@ -162,13 +170,13 @@ namespace matrix {
     };
 
     template <typename ElemT>
-    bool matrix_t<ElemT>::swap_rows(matrix_t<double>& calc_matrix, int a, int b) noexcept {
+    bool swap_rows(matrix_t<ElemT>& matrix, int a, int b) noexcept {
         if (a == b)
             return false;
 
-        int cols = calc_matrix.get_cols();
+        int cols = matrix.get_cols();
         for (int i = 0; i < cols; i++)
-            std::swap(calc_matrix[a][i], calc_matrix[b][i]);
+            std::swap(matrix[a][i], matrix[b][i]);
 
         return true;
     }

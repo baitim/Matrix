@@ -20,10 +20,10 @@
 
 ## How to test
 
-Unit tests:<br>
-write <code>cd tests</code> in terminal <br>
-write <code>python3 generate.py</code> in terminal <br>
-in root dir write <code>./build/tests/unit_matrix</code> in terminal
+* Testing
+    - End to end & Unit<br>
+        in root dir write <code>ctest --test-dir build</code> in terminal <br>
+        maybe you will need these flags for the ctest <code>--rerun-failed --output-on-failure</code>
 
 <p align="center"><img src="https://github.com/baitim/Matrix/blob/main/images/cat.gif" width="40%"></p>
 

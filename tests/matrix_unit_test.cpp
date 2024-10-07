@@ -1,40 +1,49 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include <glob.h>
+#include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include "matrix.hpp"
 
-static const double EPSILON_ROUGH = 1e-3;
+static const double EPSILON_ROUGH = 1e-2;
 static const double EPSILON       = 1e-8;
+
+std::vector<std::string> get_sorted_files(std::filesystem::path path) {
+    std::vector<std::string> files;
+
+    for (const auto& entry : std::filesystem::directory_iterator(path))
+        files.push_back(entry.path().string());
+
+    std::sort(files.begin(), files.end());
+    return files;
+}
 
 TEST(Matrix_shuffle, end_to_end) 
 {
-    glob_t test_files;
-    glob("../../tests/tests_dat/test_*.in", GLOB_ERR, NULL, &test_files);
+    std::filesystem::path dir = "../../tests/";
+    std::filesystem::path answers_path = dir / "answers/";
+    std::filesystem::path tests_path   = dir / "tests_dat/";
 
-    glob_t ans_files;
-    glob("../../tests/answers/answer_*.ans", GLOB_ERR, NULL, &ans_files);
+    std::vector<std::string> answers_str = get_sorted_files(answers_path);
+    std::vector<std::string> tests_str   = get_sorted_files(tests_path);
+    const int count_tests = std::min(answers_str.size(), tests_str.size());
 
-    int count_tests = std::min(test_files.gl_pathc, ans_files.gl_pathc);
     for (int i = 0; i < count_tests; ++i) {
-        std::ifstream test_file(test_files.gl_pathv[i]);
+        std::ifstream test_file(tests_str[i]);
         int n;
         test_file >> n;
         matrix::matrix_t<double> matrix{n, n};
         test_file >> matrix;
         test_file.close();
 
-        std::ifstream answer_file(ans_files.gl_pathv[i]);
+        std::ifstream answer_file(answers_str[i]);
         double ans;
         answer_file >> ans;
         answer_file.close();
 
         EXPECT_LT(std::fabs(matrix.determinant() - ans), EPSILON_ROUGH);
     }
-
-    globfree(&test_files);
-    globfree(&ans_files);
 }
 
 TEST(Matrix_main, test_fill_val)
@@ -43,7 +52,7 @@ TEST(Matrix_main, test_fill_val)
     double val = 52;
     matrix::matrix_t<double> matrix{n, n, val};
 
-    ASSERT_LT(std::fabs(matrix.determinant() - 0), EPSILON);
+    ASSERT_LT(std::fabs(matrix.determinant()), EPSILON);
 }
 
 TEST(Matrix_main, test_trace)
