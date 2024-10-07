@@ -11,8 +11,8 @@ namespace matrix {
         int rows_;
         int cols_;
         ElemT* elems_; // less news &
-                       //  number of elems in row is constant &
-                       //  can precalculate shift of rows index like shift_i = i * N, then m[i_shift + j]
+                       // number of elems in row is constant &
+                       // can precalculate shift of rows index like shift_i = i * N, then m[shift_i + j]
 
         matrix_buf_t(int rows, int cols) : rows_(rows), cols_(cols) {
             elems_ = new ElemT[rows_ * cols_]{};
