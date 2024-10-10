@@ -130,6 +130,18 @@ TEST(Matrix_det, test_det_cleanness)
     ASSERT_EQ((matrix == matrix2), 1);
 }
 
+TEST(Matrix_det, test1)
+{
+    int n = 4;
+    std::vector<int> elems{0, 0,  0, -1,
+                           0, 0, -1,  0,
+                           0, 1,  0,  0,
+                           1, 0,  0,  0};
+
+    matrix::matrix_t<int> matrix{n, n, elems.begin(), elems.end()};
+    ASSERT_LT(std::fabs(matrix.determinant() - 1), EPSILON);
+}
+
 TEST(Matrix_raii, test_copy_assign_ctor)
 {
     int n = 2;

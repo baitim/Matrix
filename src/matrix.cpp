@@ -10,6 +10,6 @@ int main() {
     matrix::matrix_t<double> matrix{n, n};
     std::cin >> matrix;
 
-    std::cout << std::fixed << std::setprecision(10) << matrix.determinant() << "\n";
+    std::cout << matrix.determinant() << "\n";
     return 0;
 }

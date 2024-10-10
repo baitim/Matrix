@@ -147,8 +147,7 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    if (doubles::is_double_greater(calc_matrix[j][i],
-                                                   calc_matrix[j][pivot]))
+                    if (doubles::is_double_greater(abs(calc_matrix[j][i]), 0))
                         pivot = j;
                 }
 
