@@ -3,7 +3,7 @@
 #include <cstring>
 #include <cmath>
 #include "ANSI_colors.hpp"
-#include "doubles.hpp"
+#include "real_numbers.hpp"
 
 namespace matrix {
     template <typename ElemT> class matrix_buf_t {
@@ -147,14 +147,14 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    if (doubles::is_double_greater(abs(calc_matrix[j][i]), 0))
+                    if (real_numbers::is_real_gt((double)abs(calc_matrix[j][i]), (double)0))
                         pivot = j;
                 }
 
                 if (swap_rows(calc_matrix, i, pivot))
                     is_swapped = !is_swapped;
                 
-                if (doubles::is_double_equal(calc_matrix[i][i], 0))
+                if (real_numbers::is_real_eq(calc_matrix[i][i], (double)0))
                     return 0;
 
                 simplify_rows(calc_matrix, i);

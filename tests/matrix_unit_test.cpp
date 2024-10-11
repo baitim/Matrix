@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include "matrix.hpp"
 
-static const double EPSILON_ROUGH = 1e-2;
+static const double EPSILON_ROUGH = 1e-3;
 static const double EPSILON       = 1e-8;
 
 std::vector<std::string> get_sorted_files(std::filesystem::path path) {
