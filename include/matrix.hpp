@@ -147,13 +147,14 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    if (real_numbers::is_real_gt((double)abs(calc_matrix[j][i]), (double)0))
+                    if (real_numbers::is_real_gt((double)abs(calc_matrix[j][i]),
+                                                 (double)abs(calc_matrix[pivot][i])))
                         pivot = j;
                 }
 
                 if (swap_rows(calc_matrix, i, pivot))
                     is_swapped = !is_swapped;
-                
+
                 if (real_numbers::is_real_eq(calc_matrix[i][i], (double)0))
                     return 0;
 
