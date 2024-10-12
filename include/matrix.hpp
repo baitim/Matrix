@@ -147,8 +147,8 @@ namespace matrix {
 
                 int pivot = i;
                 for (int j = i + 1; j < rows_; ++j) {
-                    if (real_numbers::is_real_gt((double)abs(calc_matrix[j][i]),
-                                                 (double)abs(calc_matrix[pivot][i])))
+                    if (real_numbers::is_real_gt((double)fabs(calc_matrix[j][i]),
+                                                 (double)fabs(calc_matrix[pivot][i])))
                         pivot = j;
                 }
 
