@@ -173,7 +173,7 @@ TEST(Matrix_raii, test_move_assign_ctor)
     int n2 = 3;
     matrix::matrix_t<double> matrix2{n2, n2, elems.begin(), elems.end()};
 
-    matrix::swap(matrix1, matrix2);
+    std::swap(matrix1, matrix2);
 
     ASSERT_LT(std::fabs(matrix1.determinant() - (-3.075)), EPSILON);
     ASSERT_LT(std::fabs(matrix2.determinant() - 0), EPSILON);

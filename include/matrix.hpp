@@ -207,13 +207,6 @@ namespace matrix {
     }
 
     template <typename ElemT>
-    void swap(matrix_t<ElemT>& x, matrix_t<ElemT>& y) {
-        matrix_t<ElemT> tmp = std::move(x);
-        x = std::move(y);
-        y = std::move(tmp);
-    }
-
-    template <typename ElemT>
     bool operator==(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) noexcept {
         int xrows = x.get_rows();
         int xcols = x.get_cols();
