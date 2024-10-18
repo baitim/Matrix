@@ -1,9 +1,11 @@
 #pragma once
 
-#include <cstring>
-#include <cmath>
 #include "ANSI_colors.hpp"
 #include "real_numbers.hpp"
+
+#include <iostream>
+#include <cstring>
+#include <type_traits>
 
 namespace matrix {
     template <typename ElemT> class matrix_buf_t {
@@ -15,11 +17,14 @@ namespace matrix {
                        // can precalculate shift of rows index like shift_i = i * N, then m[shift_i + j]
 
         matrix_buf_t(int rows, int cols) : rows_(rows), cols_(cols) {
+            static_assert(std::is_default_constructible_v<ElemT>, "Type must be default-constructible");
             elems_ = new ElemT[rows_ * cols_]{};
         }
 
         matrix_buf_t(const matrix_buf_t<ElemT>& other) : matrix_buf_t<ElemT>(other.rows_, other.cols_) {
-            memcpy(elems_, other.elems_, sizeof(ElemT) * other.rows_ * other.cols_);
+            static_assert(std::is_assignable<ElemT&, ElemT>::value, "Type must be assignable");
+            for (int i = 0, end = rows_ * cols_; i < end; ++i)
+                elems_[i] = other.elems_[i];
         }
 
         matrix_buf_t& operator=(const matrix_buf_t<ElemT>& other) {
@@ -88,22 +93,25 @@ namespace matrix {
         matrix_t(int rows, int cols) : matrix_buf_t<ElemT>(rows, cols) {}
 
         matrix_t(int rows, int cols, const ElemT& val) : matrix_t<ElemT>(rows, cols) {
+            static_assert(std::is_assignable<ElemT&, ElemT>::value, "Type must be assignable");
             for (int i = 0, end = rows_ * cols_; i < end; ++i)
                 elems_[i] = val;
         }
 
         template <typename It>
         matrix_t(int rows, int cols, It start, It fin) : matrix_t<ElemT>(rows, cols) {
+            static_assert(std::is_assignable<ElemT&, typename It::value_type>::value, "Type must be assignable");
             int i = 0;
             int end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
-                elems_[i] = ElemT(*it);
+                elems_[i] = *it;
         }
 
-        static matrix_t<ElemT>* eye(int rows, int cols) {
-            matrix_t<ElemT>* matrix = new matrix_t<ElemT>(rows, cols, 0);
+        static matrix_t<ElemT> eye(int rows, int cols, const ElemT& zero, const ElemT& one) {
+            static_assert(std::is_assignable<ElemT&, ElemT>::value, "Type must be assignable");
+            matrix_t<ElemT> matrix{rows, cols, zero};
             for (int i = 0, end = std::min(rows, cols); i < end; ++i)
-                matrix->elems_[i * cols + i] = ElemT(1);
+                matrix.elems_[i * cols + i] = one;
             return matrix;
         }
 
@@ -121,10 +129,11 @@ namespace matrix {
 
         template <typename ElemT2>
         matrix_t(const matrix_t<ElemT2>& other) : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
+            static_assert(std::is_assignable<ElemT&, ElemT2>::value, "Type must be assignable");
             for(int i = 0; i < rows_; ++i) {
                 int row_shift_i = i * cols_;
                 for (int j = 0; j < cols_; ++j) {
-                    elems_[row_shift_i + j] = ElemT(other[i][j]);
+                    elems_[row_shift_i + j] = other[i][j];
                 }
             }
         }

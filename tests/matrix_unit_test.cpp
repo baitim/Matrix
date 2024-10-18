@@ -1,10 +1,12 @@
+#include "matrix.hpp"
+
+#include <gtest/gtest.h>
+
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include <gtest/gtest.h>
-#include "matrix.hpp"
 
 static const double EPSILON_ROUGH = 1e-3;
 static const double EPSILON       = 1e-8;
@@ -70,11 +72,10 @@ TEST(Matrix_main, test_trace)
 TEST(Matrix_main, test_eye)
 {
     int n = 52;
-    matrix::matrix_t<double>* matrix = matrix::matrix_t<double>::eye(n, n);
+    matrix::matrix_t<double> matrix = matrix::matrix_t<double>::eye(n, n, 0.f, 1.f);
 
-    EXPECT_LT(std::fabs(matrix->determinant() - 1), EPSILON);
-    EXPECT_LT(std::fabs(matrix->trace() - n), EPSILON);
-    delete matrix;
+    ASSERT_LT(std::fabs(matrix.determinant() - 1), EPSILON);
+    ASSERT_LT(std::fabs(matrix.trace() - n), EPSILON);
 }
 
 TEST(Matrix_det, test_double)
