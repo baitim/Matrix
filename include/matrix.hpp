@@ -8,7 +8,8 @@
 #include <type_traits>
 
 namespace matrix {
-    template <class ElemT> class matrix_buf_t {
+    template <typename ElemT>
+    class matrix_buf_t {
     protected:
         unsigned rows_;
         unsigned cols_;
@@ -35,7 +36,8 @@ namespace matrix {
         }
 
         matrix_buf_t(matrix_buf_t<ElemT>&& other) noexcept :
-                     rows_(other.rows_), cols_(other.cols_), 
+                     rows_(other.rows_),
+                     cols_(other.cols_), 
                      elems_(other.elems_) {
             other.rows_ = other.cols_ = 0;
             other.elems_ = nullptr;
@@ -99,14 +101,12 @@ namespace matrix {
         matrix_t(unsigned rows, unsigned cols) : matrix_buf_t<ElemT>(rows, cols) {}
 
         matrix_t(unsigned rows, unsigned cols, const ElemT& val) : matrix_t<ElemT>(rows, cols) {
-            static_assert(std::is_assignable_v<ElemT&, ElemT>, "Type must be assignable");
             for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
                 elems_[i] = val;
         }
 
         template <typename It>
         matrix_t(unsigned rows, unsigned cols, It start, It fin) : matrix_t<ElemT>(rows, cols) {
-            static_assert(std::is_assignable_v<ElemT&, typename It::value_type>, "Type must be assignable");
             unsigned i = 0;
             unsigned end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
@@ -115,7 +115,6 @@ namespace matrix {
 
         static matrix_t<ElemT> eye(unsigned rows, unsigned cols,
                                    const ElemT& zero, const ElemT& one) {
-            static_assert(std::is_assignable_v<ElemT&, ElemT>, "Type must be assignable");
             matrix_t<ElemT> matrix{rows, cols, zero};
             for (unsigned i = 0, end = std::min(rows, cols); i < end; ++i)
                 matrix.elems_[i * cols + i] = one;
@@ -136,7 +135,6 @@ namespace matrix {
 
         template <typename ElemT2>
         matrix_t(const matrix_t<ElemT2>& other) : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
-            static_assert(std::is_assignable_v<ElemT&, ElemT2>, "Type must be assignable");
             for(unsigned i = 0; i < rows_; ++i) {
                 unsigned row_shift_i = i * cols_;
                 for (unsigned j = 0; j < cols_; ++j) {
