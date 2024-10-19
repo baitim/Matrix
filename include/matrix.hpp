@@ -234,7 +234,7 @@ namespace matrix {
     }
 
     template <typename ElemT>
-    std::istream& operator>>(std::istream& is, const matrix_t<ElemT>& matrix) noexcept {
+    std::istream& operator>>(std::istream& is, const matrix_t<ElemT>& matrix) {
         int rows = matrix.get_rows();
         int cols = matrix.get_cols();
 
@@ -245,7 +245,7 @@ namespace matrix {
     }
 
     template <typename ElemT>
-    std::ostream& operator<<(std::ostream& os, const matrix_t<ElemT>& matrix) noexcept {
+    std::ostream& operator<<(std::ostream& os, const matrix_t<ElemT>& matrix) {
         int rows = matrix.get_rows();
         int cols = matrix.get_cols();
 
