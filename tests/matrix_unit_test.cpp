@@ -29,11 +29,11 @@ TEST(Matrix_shuffle, end_to_end)
 
     std::vector<std::string> answers_str = get_sorted_files(answers_path);
     std::vector<std::string> tests_str   = get_sorted_files(tests_path);
-    const int count_tests = std::min(answers_str.size(), tests_str.size());
+    const unsigned count_tests = std::min(answers_str.size(), tests_str.size());
 
-    for (int i = 0; i < count_tests; ++i) {
+    for (unsigned i = 0; i < count_tests; ++i) {
         std::ifstream test_file(tests_str[i]);
-        int n;
+        unsigned n;
         test_file >> n;
         matrix::matrix_t<double> matrix{n, n};
         test_file >> matrix;
@@ -50,7 +50,7 @@ TEST(Matrix_shuffle, end_to_end)
 
 TEST(Matrix_main, test_fill_val)
 {
-    int n = 3;
+    unsigned n = 3;
     double val = 52;
     matrix::matrix_t<double> matrix{n, n, val};
 
@@ -59,7 +59,7 @@ TEST(Matrix_main, test_fill_val)
 
 TEST(Matrix_main, test_trace)
 {
-    int n = 3;
+    unsigned n = 3;
     std::vector<double> elems{1e0, 1e1, 1e2,
                               1e3, 1e4, 1e5,
                               1e6, 1e7, 1e8};
@@ -71,7 +71,7 @@ TEST(Matrix_main, test_trace)
 
 TEST(Matrix_main, test_eye)
 {
-    int n = 52;
+    unsigned n = 52;
     matrix::matrix_t<double> matrix = matrix::matrix_t<double>::eye(n, n, 0.f, 1.f);
 
     ASSERT_LT(std::fabs(matrix.determinant() - 1), EPSILON);
@@ -80,7 +80,7 @@ TEST(Matrix_main, test_eye)
 
 TEST(Matrix_det, test_double)
 {
-    int n = 3;
+    unsigned n = 3;
     std::vector<double> elems{1.6, 1.9, 0.5,
                               1.1, 1.3, 0.8,
                               0.3, 0.4, 0.5};
@@ -92,11 +92,11 @@ TEST(Matrix_det, test_double)
 
 TEST(Matrix_det, test_int)
 {
-    int n1 = 4;
+    unsigned n1 = 4;
     int default_value = 15;
     matrix::matrix_t<int> matrix1{n1, n1, default_value};
 
-    int n2 = 3;
+    unsigned n2 = 3;
     std::vector<int> elems{7, 13, 3,
                            4, 5,  17,
                            9, 11, 10};
@@ -108,7 +108,7 @@ TEST(Matrix_det, test_int)
 
 TEST(Matrix_det, test_rectangle)
 {
-    int n = 2, m = 3;
+    unsigned n = 2, m = 3;
     std::vector<double> elems{1.3, 1.2, 0.7,
                               1.4, 1.6, 0.4};
 
@@ -119,7 +119,7 @@ TEST(Matrix_det, test_rectangle)
 
 TEST(Matrix_det, test_det_cleanness)
 {
-    int n = 3;
+    unsigned n = 3;
     std::vector<double> elems{1.4, 2.1, 0.5,
                               1.6, 0.8, 1.7,
                               0.9, 1.2, 1.8};
@@ -133,7 +133,7 @@ TEST(Matrix_det, test_det_cleanness)
 
 TEST(Matrix_det, test1)
 {
-    int n = 4;
+    unsigned n = 4;
     std::vector<int> elems{0, 0,  0, -1,
                            0, 0, -1,  0,
                            0, 1,  0,  0,
@@ -145,7 +145,7 @@ TEST(Matrix_det, test1)
 
 TEST(Matrix_raii, test_copy_assign_ctor)
 {
-    int n = 2;
+    unsigned n = 2;
     double default_value = 52;
     matrix::matrix_t<double> matrix{n, n, default_value};
 
@@ -164,14 +164,14 @@ TEST(Matrix_raii, test_copy_assign_ctor)
 
 TEST(Matrix_raii, test_move_assign_ctor)
 {
-    int n1 = 2;
+    unsigned n1 = 2;
     double default_value = 52;
     matrix::matrix_t<double> matrix1{n1, n1, default_value};
     std::vector<double> elems{1.4, 2.1, 0.5,
                               1.6, 0.8, 1.7,
                               0.9, 1.2, 1.8};
 
-    int n2 = 3;
+    unsigned n2 = 3;
     matrix::matrix_t<double> matrix2{n2, n2, elems.begin(), elems.end()};
 
     std::swap(matrix1, matrix2);
