@@ -54,8 +54,6 @@ namespace matrix {
         }
 
         ~matrix_buf_t() {
-            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
-                 elems_[i].~ElemT();
             delete [] elems_;
         }
     };
@@ -73,7 +71,9 @@ namespace matrix {
     class matrix_t;
 
     template <matrix_elem ElemT>
-    bool swap_rows(matrix_t<ElemT>& matrix, unsigned a, unsigned b) noexcept;
+    bool swap_rows(matrix_t<ElemT>& matrix, unsigned a, unsigned b)
+    noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
+                      std::is_nothrow_move_assignable_v<ElemT>));
 
     template <matrix_elem ElemT>
     class matrix_t final : private matrix_buf_t<ElemT> {
@@ -184,7 +184,9 @@ namespace matrix {
     };
 
     template <matrix_elem ElemT>
-    bool swap_rows(matrix_t<ElemT>& matrix, unsigned a, unsigned b) noexcept {
+    bool swap_rows(matrix_t<ElemT>& matrix, unsigned a, unsigned b) 
+    noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
+                      std::is_nothrow_move_assignable_v<ElemT>)) {
         if (a == b)
             return false;
 
