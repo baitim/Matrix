@@ -136,6 +136,7 @@ namespace matrix {
 
         template <typename ElemT2>
         matrix_t(const matrix_t<ElemT2>& other) : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
+            static_assert(std::is_assignable_v<ElemT&, ElemT2>, "Type must be assignable");
             for(unsigned i = 0; i < rows_; ++i) {
                 unsigned row_shift_i = i * cols_;
                 for (unsigned j = 0; j < cols_; ++j) {
