@@ -107,6 +107,7 @@ namespace matrix {
 
         template <typename It>
         matrix_t(unsigned rows, unsigned cols, It start, It fin) : matrix_t<ElemT>(rows, cols) {
+            static_assert(std::is_assignable_v<ElemT&, typename It::value_type>, "Type must be assignable");
             unsigned i = 0;
             unsigned end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
