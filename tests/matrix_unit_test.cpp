@@ -93,15 +93,15 @@ TEST(Matrix_det, test_double)
 TEST(Matrix_det, test_int)
 {
     unsigned n1 = 4;
-    int default_value = 15;
-    matrix::matrix_t<int> matrix1{n1, n1, default_value};
+    long double default_value = 15;
+    matrix::matrix_t<long double> matrix1{n1, n1, default_value};
 
     unsigned n2 = 3;
-    std::vector<int> elems{7, 13, 3,
-                           4, 5,  17,
-                           9, 11, 10};
+    std::vector<long double> elems{7, 13, 3,
+                                   4, 5,  17,
+                                   9, 11, 10};
 
-    matrix::matrix_t<int> matrix2{n2, n2, elems.begin(), elems.end()};
+    matrix::matrix_t<long double> matrix2{n2, n2, elems.begin(), elems.end()};
     ASSERT_LT(std::fabs(matrix1.determinant() - 0), EPSILON);
     ASSERT_LT(std::fabs(matrix2.determinant() - 507), EPSILON);
 }
@@ -134,12 +134,12 @@ TEST(Matrix_det, test_det_cleanness)
 TEST(Matrix_det, test1)
 {
     unsigned n = 4;
-    std::vector<int> elems{0, 0,  0, -1,
-                           0, 0, -1,  0,
-                           0, 1,  0,  0,
-                           1, 0,  0,  0};
+    std::vector<float> elems{0, 0,  0, -1,
+                             0, 0, -1,  0,
+                             0, 1,  0,  0,
+                             1, 0,  0,  0};
 
-    matrix::matrix_t<int> matrix{n, n, elems.begin(), elems.end()};
+    matrix::matrix_t<float> matrix{n, n, elems.begin(), elems.end()};
     ASSERT_LT(std::fabs(matrix.determinant() - 1), EPSILON);
 }
 

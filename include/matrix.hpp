@@ -99,8 +99,8 @@ namespace matrix {
         };
 
     private:
-        void   simplify_rows(matrix_t<double>& calc_matrix, unsigned i);
-        double diag_mult    (const matrix_t<double>& calc_matrix) const noexcept;
+        void  simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i);
+        ElemT diag_mult    (const matrix_t<ElemT>& calc_matrix) const noexcept;
 
     public:
         matrix_t(unsigned rows, unsigned cols) : matrix_buf_t<ElemT>(rows, cols) {}
@@ -157,32 +157,33 @@ namespace matrix {
             return trace;
         }
 
-        double determinant() {
+        ElemT determinant() {
+            static_assert(std::is_floating_point_v<ElemT>, "Type must be floating");
             if (cols_ != rows_)
                 return 0;
 
-            matrix_t<double> calc_matrix{*this};
+            matrix_t<ElemT> calc_matrix{*this};
 
             bool is_swapped = false;
             for (unsigned i = 0; i < cols_; ++i) {
 
                 unsigned pivot = i;
                 for (unsigned j = i + 1; j < rows_; ++j) {
-                    if (real_numbers::is_real_gt((double)fabs(calc_matrix[j][i]),
-                                                 (double)fabs(calc_matrix[pivot][i])))
+                    if (real_numbers::is_real_gt(std::abs(calc_matrix[j][i]),
+                                                 std::abs(calc_matrix[pivot][i])))
                         pivot = j;
                 }
 
                 if (swap_rows(calc_matrix, i, pivot))
                     is_swapped = !is_swapped;
 
-                if (real_numbers::is_real_eq(calc_matrix[i][i], (double)0))
+                if (real_numbers::is_real_eq(calc_matrix[i][i], static_cast<ElemT>(0)))
                     return 0;
 
                 simplify_rows(calc_matrix, i);
             }
 
-            double det = diag_mult(calc_matrix);
+            ElemT det = diag_mult(calc_matrix);
             if (is_swapped)
                 det *= -1;
 
@@ -205,25 +206,26 @@ namespace matrix {
     }
 
     template <matrix_elem ElemT>
-    void matrix_t<ElemT>::simplify_rows(matrix_t<double>& calc_matrix, unsigned i) {
+    void matrix_t<ElemT>::simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i) {
+        static_assert(std::is_floating_point_v<ElemT>, "Type must be floating");
         unsigned rows = calc_matrix.get_rows();
         unsigned cols = calc_matrix.get_cols();
 
         for (unsigned j = i + 1; j < rows; ++j) {
-            double coef = calc_matrix[j][i] / calc_matrix[i][i];
+            ElemT coef = calc_matrix[j][i] / calc_matrix[i][i];
             for (unsigned k = 0; k < cols; ++k)
                 calc_matrix[j][k] -= coef * calc_matrix[i][k];
         }
     }
 
     template <matrix_elem ElemT>
-    double matrix_t<ElemT>::diag_mult(const matrix_t<double>& calc_matrix) const noexcept {
+    ElemT matrix_t<ElemT>::diag_mult(const matrix_t<ElemT>& calc_matrix) const noexcept {
         unsigned rows = calc_matrix.get_rows();
         unsigned cols = calc_matrix.get_cols();
         if (rows != cols)
             return 0;
 
-        double det = 1;
+        ElemT det = 1;
         for (unsigned i = 0; i < rows; ++i)
             det *= calc_matrix[i][i];
         return det;
