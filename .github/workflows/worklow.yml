@@ -20,7 +20,7 @@ jobs:
       with:
         python-version: '3.11'
     - name: install python requirements
-      run: pip install pipreqs ; pip freeze > requirements.txt ; pip install -r requirements.txt
+      run: python3 -m pip install --upgrade pip setuptools wheel
     - name: update submodules
       run: git submodule update --init --recursive
     - name: CMake release config
