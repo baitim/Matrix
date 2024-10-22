@@ -175,7 +175,22 @@ namespace matrix {
             if (is_swapped)
                 det *= -1;
 
+            calc_matrix.dump(std::cout);
+
             return det;
+        }
+
+        std::ostream& dump(std::ostream& os) const {
+            os << print_lblue("\nMatrix:\n");
+            for (unsigned i = 0; i < rows_; ++i) {
+                unsigned i_shift = i * cols_;
+                for (unsigned j = 0; j < cols_; ++j) {
+                    os << print_lcyan(elems_[i_shift + j]) << " ";
+                }
+                os << "\n";
+            }
+            os << "\n";
+            return os;
         }
     };
 
@@ -250,17 +265,6 @@ namespace matrix {
 
     template <matrix_elem ElemT>
     std::ostream& operator<<(std::ostream& os, const matrix_t<ElemT>& matrix) {
-        unsigned rows = matrix.get_rows();
-        unsigned cols = matrix.get_cols();
-
-        os << print_lblue("\nMatrix:\n");
-        for (unsigned i = 0; i < rows; ++i) {
-            for (unsigned j = 0; j < cols; ++j) {
-                os << print_lcyan(matrix[i][j]) << " ";
-            }
-            os << "\n";
-        }
-        os << "\n";
-        return os;
+        return matrix.dump(os);
     }
 };
