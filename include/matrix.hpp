@@ -23,8 +23,8 @@ namespace matrix {
             elems_ = (ElemT*) ::operator new (sizeof(ElemT) * rows_ * cols_);
         }
 
-        matrix_buf_t(const matrix_buf_t<ElemT>& other) : matrix_buf_t<ElemT>(other.rows_, other.cols_) {
-            static_assert(std::is_copy_constructible_v<ElemT>, "Type must be copy constructible");
+        matrix_buf_t(const matrix_buf_t<ElemT>& other)
+        requires std::is_copy_constructible_v<ElemT> : matrix_buf_t<ElemT>(other.rows_, other.cols_) {
             for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
                 new (elems_ + i) ElemT(other.elems_[i]);
             used_ = rows_ * cols_;
@@ -99,7 +99,7 @@ namespace matrix {
         };
 
     private:
-        void  simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i);
+        void  simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i) requires std::is_floating_point_v<ElemT>;
         ElemT diag_mult    (const matrix_t<ElemT>& calc_matrix) const noexcept;
 
     public:
@@ -111,8 +111,8 @@ namespace matrix {
         }
 
         template <typename It>
-        matrix_t(unsigned rows, unsigned cols, It start, It fin) : matrix_t<ElemT>(rows, cols) {
-            static_assert(std::is_assignable_v<ElemT&, typename It::value_type>, "Type must be assignable");
+        matrix_t(unsigned rows, unsigned cols, It start, It fin)
+        requires std::is_assignable_v<ElemT&, typename It::value_type> : matrix_t<ElemT>(rows, cols) {
             unsigned i = 0;
             unsigned end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
@@ -139,17 +139,6 @@ namespace matrix {
             return cols_;
         }
 
-        template <typename ElemT2>
-        matrix_t(const matrix_t<ElemT2>& other) : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
-            static_assert(std::is_assignable_v<ElemT&, ElemT2>, "Type must be assignable");
-            for(unsigned i = 0; i < rows_; ++i) {
-                unsigned row_shift_i = i * cols_;
-                for (unsigned j = 0; j < cols_; ++j) {
-                    elems_[row_shift_i + j] = other[i][j];
-                }
-            }
-        }
-
         ElemT trace() const noexcept {
             ElemT trace = 0;
             for (unsigned i = 0, end = std::min(rows_, cols_); i < end; ++i)
@@ -157,8 +146,7 @@ namespace matrix {
             return trace;
         }
 
-        ElemT determinant() {
-            static_assert(std::is_floating_point_v<ElemT>, "Type must be floating");
+        ElemT determinant() requires std::is_floating_point_v<ElemT> {
             if (cols_ != rows_)
                 return 0;
 
@@ -206,8 +194,8 @@ namespace matrix {
     }
 
     template <matrix_elem ElemT>
-    void matrix_t<ElemT>::simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i) {
-        static_assert(std::is_floating_point_v<ElemT>, "Type must be floating");
+    void matrix_t<ElemT>::simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i)
+    requires std::is_floating_point_v<ElemT> {
         unsigned rows = calc_matrix.get_rows();
         unsigned cols = calc_matrix.get_cols();
 
