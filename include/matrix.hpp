@@ -4,6 +4,7 @@
 #include "real_numbers.hpp"
 
 #include <iostream>
+#include <utility>
 #include <cstring>
 #include <type_traits>
 
@@ -13,48 +14,52 @@ namespace matrix {
     protected:
         unsigned rows_;
         unsigned cols_;
+        unsigned used_ = 0;
         ElemT* elems_; // less news &
                        // number of elems in row is constant &
                        // can precalculate shift of rows index like shift_i = i * N, then m[shift_i + j]
 
         matrix_buf_t(unsigned rows, unsigned cols) : rows_(rows), cols_(cols) {
-            elems_ = new ElemT[rows_ * cols_];
+            elems_ = (ElemT*) ::operator new (sizeof(ElemT) * rows_ * cols_);
         }
 
         matrix_buf_t(const matrix_buf_t<ElemT>& other) : matrix_buf_t<ElemT>(other.rows_, other.cols_) {
             static_assert(std::is_copy_constructible_v<ElemT>, "Type must be copy constructible");
             for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
                 new (elems_ + i) ElemT(other.elems_[i]);
+            used_ = rows_ * cols_;
         }
 
         matrix_buf_t& operator=(const matrix_buf_t<ElemT>& other) {
             matrix_buf_t<ElemT> new_matrix_buf{other};
             std::swap(rows_,  new_matrix_buf.rows_);
             std::swap(cols_,  new_matrix_buf.cols_);
+            std::swap(used_,  new_matrix_buf.used_);
             std::swap(elems_, new_matrix_buf.elems_);
             return *this;
         }
 
         matrix_buf_t(matrix_buf_t<ElemT>&& other) noexcept :
                      rows_(other.rows_),
-                     cols_(other.cols_), 
+                     cols_(other.cols_),
+                     used_(other.used_),
                      elems_(other.elems_) {
-            other.rows_ = other.cols_ = 0;
+            other.rows_ = other.cols_ = other.used_ = 0;
             other.elems_ = nullptr;
         }
         
         matrix_buf_t& operator=(matrix_buf_t<ElemT>&& other) noexcept {
-            if (this == &other)
-                return *this;
-
-            std::swap(rows_,  other.rows_);
-            std::swap(cols_,  other.cols_);
-            std::swap(elems_, other.elems_);
+            rows_  = std::exchange(other.rows_,  0);
+            cols_  = std::exchange(other.cols_,  0);
+            used_  = std::exchange(other.used_,  0);
+            elems_ = std::exchange(other.elems_, nullptr);
             return *this;
         }
 
         ~matrix_buf_t() {
-            delete [] elems_;
+            for (unsigned i = 0; i < used_; ++i)
+                elems_[i].~ElemT();
+            ::operator delete(elems_, sizeof(ElemT) * rows_ * cols_);
         }
     };
 
