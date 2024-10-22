@@ -20,8 +20,10 @@ jobs:
       with:
         python-version: '3.11'
     - name: install python requirements
-      run: python -m pip freeze > requirements.txt ;
-           python -m pip install -r requirements.txt
+      run: pip install wheel;
+           pip install pipreqs;
+           pipreqs --force .;
+           pip wheel --wheel-dir=/local/wheels -r requirements.txt
     - name: update submodules
       run: git submodule update --init --recursive
     - name: CMake release config
