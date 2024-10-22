@@ -51,8 +51,8 @@ TEST(Matrix_shuffle, end_to_end)
 TEST(Matrix_main, test_fill_val)
 {
     unsigned n = 3;
-    double val = 52;
-    matrix::matrix_t<double> matrix{n, n, val};
+    float val = 52;
+    matrix::matrix_t<float> matrix{n, n, val};
 
     ASSERT_LT(std::fabs(matrix.determinant()), EPSILON);
 }
