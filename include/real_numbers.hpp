@@ -11,24 +11,25 @@ namespace real_numbers {
     template<> class my_numeric_limits<long double> {
     public:
        static constexpr long double epsilon() { return 1e-11; };
-       static constexpr long double min()     { return 1e-12; };
+       static constexpr long double min()     { return 1e-14; };
     };
 
     template<> class my_numeric_limits<double> {
     public:
        static constexpr double epsilon() { return 1e-9; };
-       static constexpr double min()     { return 1e-10; };
+       static constexpr double min()     { return 1e-12; };
     };
 
     template<> class my_numeric_limits<float> {
     public:
        static constexpr float epsilon() { return 1e-6; };
-       static constexpr float min()     { return 1e-7; };
+       static constexpr float min()     { return 1e-8; };
     };
 
     template <typename T = double>
     inline T get_normalized_eps(T a, T b) {
-        return std::max(my_numeric_limits<T>::min(), std::max(a, b) * my_numeric_limits<T>::epsilon());
+        return std::max(my_numeric_limits<T>::min(),
+                        std::max(std::abs(a), std::abs(b)) * my_numeric_limits<T>::epsilon());
     }
 
     template <typename T = double>
