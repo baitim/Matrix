@@ -10,62 +10,82 @@ namespace real_numbers {
 
     template<> class my_numeric_limits<long double> {
     public:
-       static constexpr long double epsilon() { return 1e-11; };
-       static constexpr long double min()     { return 1e-14; };
+       static constexpr long double epsilon() { return 1e-12; };
     };
 
     template<> class my_numeric_limits<double> {
     public:
        static constexpr double epsilon() { return 1e-9; };
-       static constexpr double min()     { return 1e-12; };
     };
 
     template<> class my_numeric_limits<float> {
     public:
        static constexpr float epsilon() { return 1e-6; };
-       static constexpr float min()     { return 1e-8; };
     };
 
     template <typename T = double>
-    inline T get_normalized_eps(T a, T b) {
-        return std::max(my_numeric_limits<T>::min(),
-                        std::max(std::abs(a), std::abs(b)) * my_numeric_limits<T>::epsilon());
+    inline T get_max_abs(T a, T b) noexcept {
+        return std::max(std::abs(a), std::abs(b));
     }
 
     template <typename T = double>
     inline bool is_real_eq(T a, T b) noexcept {
-        T eps = get_normalized_eps(a, b);
-        return (std::fabs(a - b) < eps);
+        T max_abs = get_max_abs(a, b);
+        if (max_abs < std::numeric_limits<T>::epsilon())
+            return true;
+
+        T eps = my_numeric_limits<T>::epsilon();
+        return ((std::fabs(a - b) / max_abs) < eps);
     }
 
     template <typename T = double>
     inline bool is_real_ne(T a, T b) noexcept {
-        T eps = get_normalized_eps(a, b);
-        return (std::fabs(a - b) > eps);
+        T max_abs = get_max_abs(a, b);
+        if (max_abs < std::numeric_limits<T>::epsilon())
+            return false;
+
+        T eps = my_numeric_limits<T>::epsilon();
+        return ((std::fabs(a - b) / max_abs) > eps);
     }
 
     template <typename T = double>
     inline bool is_real_lt(T a, T b) noexcept {
-        T eps = get_normalized_eps(a, b);
-        return ((a - b) < -eps);
+        T max_abs = get_max_abs(a, b);
+        if (max_abs < std::numeric_limits<T>::epsilon())
+            return false;
+
+        T eps = my_numeric_limits<T>::epsilon();
+        return (((a - b) / max_abs) < -eps);
     }
 
     template <typename T = double>
     inline bool is_real_le(T a, T b) noexcept {
-        T eps = get_normalized_eps(a, b);
-        return ((a - b) < eps);
+        T max_abs = get_max_abs(a, b);
+        if (max_abs < std::numeric_limits<T>::epsilon())
+            return true;
+
+        T eps = my_numeric_limits<T>::epsilon();
+        return (((a - b) / max_abs) < eps);
     }
 
     template <typename T = double>
     inline bool is_real_gt(T a, T b) noexcept {
-        T eps = get_normalized_eps(a, b);
-        return ((a - b) > eps);
+        T max_abs = get_max_abs(a, b);
+        if (max_abs < std::numeric_limits<T>::epsilon())
+            return false;
+
+        T eps = my_numeric_limits<T>::epsilon();
+        return (((a - b) / max_abs) > eps);
     }
 
     template <typename T = double>
     inline bool is_real_ge(T a, T b) noexcept {
-        T eps = get_normalized_eps(a, b);
-        return ((a - b) > -eps);
+        T max_abs = get_max_abs(a, b);
+        if (max_abs < std::numeric_limits<T>::epsilon())
+            return true;
+
+        T eps = my_numeric_limits<T>::epsilon();
+        return (((a - b) / max_abs) > -eps);
     }
 
     template <typename T = double>
