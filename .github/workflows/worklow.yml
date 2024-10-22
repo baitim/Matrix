@@ -20,7 +20,8 @@ jobs:
       with:
         python-version: '3.11'
     - name: install python requirements
-      run: pip install numpy
+      run: python -m pip freeze > requirements.txt ;
+           python -m pip install -r requirements.txt
     - name: update submodules
       run: git submodule update --init --recursive
     - name: CMake release config
