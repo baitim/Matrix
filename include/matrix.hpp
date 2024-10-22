@@ -175,8 +175,6 @@ namespace matrix {
             if (is_swapped)
                 det *= -1;
 
-            calc_matrix.dump(std::cout);
-
             return det;
         }
 
