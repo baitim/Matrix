@@ -15,13 +15,13 @@ jobs:
     steps:
     - name: checkout repository
       uses: actions/checkout@v3
-    - name: install python requirements
+    - name: set python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
         cache: 'pip'
-      run: pip freeze > requirements.txt
-      run: pip install -r requirements.txt
+    - name: install python requirements
+      run: pip freeze > requirements.txt ; pip install -r requirements.txt
     - name: update submodules
       run: git submodule update --init --recursive
     - name: CMake release config
