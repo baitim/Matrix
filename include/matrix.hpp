@@ -6,6 +6,7 @@
 #include <iostream>
 #include <utility>
 #include <cstring>
+#include <exception>
 #include <type_traits>
 
 namespace matrix {
@@ -21,6 +22,23 @@ namespace matrix {
 
         matrix_buf_t(unsigned rows, unsigned cols) : rows_(rows), cols_(cols) {
             elems_ = (ElemT*) ::operator new (sizeof(ElemT) * rows_ * cols_);
+        }
+
+        matrix_buf_t(unsigned rows, unsigned cols, const ElemT& val)
+        requires std::is_assignable_v<ElemT&, ElemT> : matrix_buf_t<ElemT>(rows, cols) {
+            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
+                elems_[i] = val;
+            used_ = rows_ * cols_;
+        }
+
+        template <typename It>
+        matrix_buf_t(unsigned rows, unsigned cols, It start, It fin)
+        requires std::is_assignable_v<ElemT&, typename It::value_type> : matrix_buf_t<ElemT>(rows, cols) {
+            unsigned i = 0;
+            unsigned end = rows * cols;
+            for (It it = start; it < fin && i < end; ++it, ++i)
+                elems_[i] = *it;
+            used_ = rows_ * cols_;
         }
 
         matrix_buf_t(const matrix_buf_t<ElemT>& other)
@@ -73,14 +91,6 @@ namespace matrix {
     };
 
     template <matrix_elem ElemT>
-    class matrix_t;
-
-    template <matrix_elem ElemT>
-    bool swap_rows(matrix_t<ElemT>& matrix, unsigned a, unsigned b)
-    noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
-                      std::is_nothrow_move_assignable_v<ElemT>));
-
-    template <matrix_elem ElemT>
     class matrix_t final : private matrix_buf_t<ElemT> {
         using matrix_buf_t<ElemT>::rows_;
         using matrix_buf_t<ElemT>::cols_;
@@ -99,25 +109,50 @@ namespace matrix {
         };
 
     private:
-        void  simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i) requires std::is_floating_point_v<ElemT>;
-        ElemT diag_mult    (const matrix_t<ElemT>& calc_matrix) const noexcept;
+        bool swap_rows(unsigned a, unsigned b) 
+        noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
+                          std::is_nothrow_move_assignable_v<ElemT>)) {
+            if (a == b)
+                return false;
+
+            unsigned shift_a = a * cols_;
+            unsigned shift_b = b * cols_;
+            for (unsigned i = 0; i < cols_; i++)
+                std::swap(elems_[shift_a + i], elems_[shift_b + i]);
+
+            return true;
+        }
+
+        void simplify_rows(unsigned i)
+        requires std::is_floating_point_v<ElemT> {
+
+            unsigned shift_i = i * cols_;
+            for (unsigned j = i + 1; j < rows_; ++j) {
+                unsigned shift_j = j * cols_;
+
+                ElemT coef = elems_[shift_j + i] / elems_[shift_i + i];
+                for (unsigned k = 0; k < cols_; ++k)
+                    elems_[shift_j + k] -= coef * elems_[shift_i + k];
+            }
+        }
+
+        ElemT diag_mult() {
+            if (rows_ != cols_)
+                return 0;
+
+            ElemT det = 1;
+            for (unsigned i = 0; i < rows_; ++i)
+                det *= elems_[i * cols_ + i];
+            return det;
+        }
 
     public:
         matrix_t(unsigned rows, unsigned cols) : matrix_buf_t<ElemT>(rows, cols) {}
 
-        matrix_t(unsigned rows, unsigned cols, const ElemT& val) : matrix_t<ElemT>(rows, cols) {
-            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
-                elems_[i] = val;
-        }
+        matrix_t(unsigned rows, unsigned cols, const ElemT& val) : matrix_buf_t<ElemT>(rows, cols, val) {}
 
         template <typename It>
-        matrix_t(unsigned rows, unsigned cols, It start, It fin)
-        requires std::is_assignable_v<ElemT&, typename It::value_type> : matrix_t<ElemT>(rows, cols) {
-            unsigned i = 0;
-            unsigned end = rows * cols;
-            for (It it = start; it < fin && i < end; ++it, ++i)
-                elems_[i] = *it;
-        }
+        matrix_t(unsigned rows, unsigned cols, It start, It fin) : matrix_buf_t<ElemT>(rows, cols, start, fin) {}
 
         static matrix_t<ElemT> eye(unsigned rows, unsigned cols,
                                    const ElemT& zero, const ElemT& one) {
@@ -147,7 +182,7 @@ namespace matrix {
         }
 
         ElemT determinant() requires std::is_floating_point_v<ElemT> {
-            if (cols_ != rows_)
+            if (cols_ != rows_ || cols_ == 0 || rows_ == 0)
                 return 0;
 
             matrix_t<ElemT> calc_matrix{*this};
@@ -162,28 +197,40 @@ namespace matrix {
                         pivot = j;
                 }
 
-                if (swap_rows(calc_matrix, i, pivot))
+                if (calc_matrix.swap_rows(i, pivot))
                     is_swapped = !is_swapped;
 
                 if (real_numbers::is_real_eq(calc_matrix[i][i], static_cast<ElemT>(0)))
                     return 0;
 
-                simplify_rows(calc_matrix, i);
+                calc_matrix.simplify_rows(i);
             }
 
-            ElemT det = diag_mult(calc_matrix);
+            ElemT det = calc_matrix.diag_mult();
             if (is_swapped)
                 det *= -1;
 
             return det;
         }
 
-        std::ostream& dump(std::ostream& os) const {
+        std::istream& load(std::istream& is) {
+            for (unsigned i = 0; i < rows_; ++i) {
+                unsigned shift_i = i * cols_;
+                for (unsigned j = 0; j < cols_; ++j) {
+                    is >> elems_[shift_i + j];
+                    if (!is.good() && !is.eof())
+                        throw "Incorrect input matrix element";
+                }
+            }
+            return is;
+        }
+
+        std::ostream& print(std::ostream& os) const {
             os << print_lblue("\nMatrix:\n");
             for (unsigned i = 0; i < rows_; ++i) {
-                unsigned i_shift = i * cols_;
+                unsigned shift_i = i * cols_;
                 for (unsigned j = 0; j < cols_; ++j) {
-                    os << print_lcyan(elems_[i_shift + j]) << " ";
+                    os << print_lcyan(elems_[shift_i + j]) << " ";
                 }
                 os << "\n";
             }
@@ -191,46 +238,6 @@ namespace matrix {
             return os;
         }
     };
-
-    template <matrix_elem ElemT>
-    bool swap_rows(matrix_t<ElemT>& matrix, unsigned a, unsigned b) 
-    noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
-                      std::is_nothrow_move_assignable_v<ElemT>)) {
-        if (a == b)
-            return false;
-
-        unsigned cols = matrix.get_cols();
-        for (unsigned i = 0; i < cols; i++)
-            std::swap(matrix[a][i], matrix[b][i]);
-
-        return true;
-    }
-
-    template <matrix_elem ElemT>
-    void matrix_t<ElemT>::simplify_rows(matrix_t<ElemT>& calc_matrix, unsigned i)
-    requires std::is_floating_point_v<ElemT> {
-        unsigned rows = calc_matrix.get_rows();
-        unsigned cols = calc_matrix.get_cols();
-
-        for (unsigned j = i + 1; j < rows; ++j) {
-            ElemT coef = calc_matrix[j][i] / calc_matrix[i][i];
-            for (unsigned k = 0; k < cols; ++k)
-                calc_matrix[j][k] -= coef * calc_matrix[i][k];
-        }
-    }
-
-    template <matrix_elem ElemT>
-    ElemT matrix_t<ElemT>::diag_mult(const matrix_t<ElemT>& calc_matrix) const noexcept {
-        unsigned rows = calc_matrix.get_rows();
-        unsigned cols = calc_matrix.get_cols();
-        if (rows != cols)
-            return 0;
-
-        ElemT det = 1;
-        for (unsigned i = 0; i < rows; ++i)
-            det *= calc_matrix[i][i];
-        return det;
-    }
 
     template <matrix_elem ElemT>
     bool operator==(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) noexcept {
@@ -251,18 +258,12 @@ namespace matrix {
     }
 
     template <matrix_elem ElemT>
-    std::istream& operator>>(std::istream& is, const matrix_t<ElemT>& matrix) {
-        unsigned rows = matrix.get_rows();
-        unsigned cols = matrix.get_cols();
-
-        for (unsigned i = 0; i < rows; ++i)
-            for (unsigned j = 0; j < cols; ++j)
-                is >> matrix[i][j];
-        return is;
+    std::istream& operator>>(std::istream& is, matrix_t<ElemT>& matrix) {
+        return matrix.load(is);
     }
 
     template <matrix_elem ElemT>
     std::ostream& operator<<(std::ostream& os, const matrix_t<ElemT>& matrix) {
-        return matrix.dump(os);
+        return matrix.print(os);
     }
 };
