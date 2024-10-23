@@ -6,7 +6,7 @@ int main() {
     std::cin >> n;
 
     if ((!std::cin.good() && !std::cin.eof()) || n < 0) {
-        std::cout << "Incorrect input matrix size\n";
+        std::cout << print_red("Incorrect input matrix size\n");
         return 1;
     }
 
@@ -16,7 +16,7 @@ int main() {
     try {
         std::cin >> matrix;
     } catch (const char* error_message) {
-        std::cout << error_message << "\n";
+        std::cout << print_red(error_message) << "\n";
         return 1;
     }
 
