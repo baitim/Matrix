@@ -218,7 +218,9 @@ namespace matrix {
                 unsigned shift_i = i * cols_;
                 for (unsigned j = 0; j < cols_; ++j) {
                     is >> elems_[shift_i + j];
-                    if (!is.good() && !is.eof())
+                    if (is.eof())
+                        throw "Incorrect input matrix elements count";
+                    if (!is.good())
                         throw "Incorrect input matrix element";
                 }
             }

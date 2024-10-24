@@ -5,7 +5,7 @@ int main() {
     int n;
     std::cin >> n;
 
-    if ((!std::cin.good() && !std::cin.eof()) || n < 0) {
+    if (!std::cin.good() || n <= 0) {
         std::cout << print_red("Incorrect input matrix size\n");
         return 1;
     }
