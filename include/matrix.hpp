@@ -38,7 +38,7 @@ namespace matrix {
             unsigned end = rows * cols;
             for (It it = start; it < fin && i < end; ++it, ++i)
                 elems_[i] = *it;
-            used_ = rows_ * cols_;
+            used_ = i;
         }
 
         matrix_buf_t(const matrix_buf_t<ElemT>& other)
