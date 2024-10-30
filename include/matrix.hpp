@@ -163,8 +163,7 @@ namespace matrix {
             }
         }
 
-        double determinant() const
-        requires std::is_assignable_v<ElemT&, double> {
+        double determinant() const {
             if (cols_ != rows_ || cols_ == 0 || rows_ == 0)
                 return 0;
 
