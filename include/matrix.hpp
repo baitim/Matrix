@@ -11,6 +11,15 @@
 
 namespace matrix {
     template <typename ElemT>
+    concept matrix_elem = requires(ElemT elem) {
+        requires std::is_assignable_v<ElemT&, ElemT>;
+        {elem + elem} -> std::convertible_to<ElemT>;
+        {elem - elem} -> std::convertible_to<ElemT>;
+        {elem * elem} -> std::convertible_to<ElemT>;
+        {elem / elem} -> std::convertible_to<ElemT>;
+    };
+
+    template <typename ElemT>
     class matrix_buf_t {
     protected:
         unsigned rows_;
@@ -81,15 +90,6 @@ namespace matrix {
         }
     };
 
-    template <typename ElemT>
-    concept matrix_elem = requires(ElemT elem) {
-        requires std::is_assignable_v<ElemT&, ElemT>;
-        {elem + elem} -> std::convertible_to<ElemT>;
-        {elem - elem} -> std::convertible_to<ElemT>;
-        {elem * elem} -> std::convertible_to<ElemT>;
-        {elem / elem} -> std::convertible_to<ElemT>;
-    };
-
     template <matrix_elem ElemT>
     class matrix_t final : private matrix_buf_t<ElemT> {
         using matrix_buf_t<ElemT>::rows_;
@@ -108,43 +108,12 @@ namespace matrix {
             }
         };
 
-    private:
-        bool swap_rows(unsigned a, unsigned b) 
+    public:
+        bool swap_rows(unsigned a, unsigned b)
         noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
-                          std::is_nothrow_move_assignable_v<ElemT>)) {
-            if (a == b)
-                return false;
-
-            unsigned shift_a = a * cols_;
-            unsigned shift_b = b * cols_;
-            for (unsigned i = 0; i < cols_; i++)
-                std::swap(elems_[shift_a + i], elems_[shift_b + i]);
-
-            return true;
-        }
-
-        void simplify_rows(unsigned i)
-        requires std::is_floating_point_v<ElemT> {
-
-            unsigned shift_i = i * cols_;
-            for (unsigned j = i + 1; j < rows_; ++j) {
-                unsigned shift_j = j * cols_;
-
-                ElemT coef = elems_[shift_j + i] / elems_[shift_i + i];
-                for (unsigned k = 0; k < cols_; ++k)
-                    elems_[shift_j + k] -= coef * elems_[shift_i + k];
-            }
-        }
-
-        ElemT diag_mult() {
-            if (rows_ != cols_)
-                return 0;
-
-            ElemT det = 1;
-            for (unsigned i = 0; i < rows_; ++i)
-                det *= elems_[i * cols_ + i];
-            return det;
-        }
+                          std::is_nothrow_move_assignable_v<ElemT>));
+        void simplify_rows(unsigned i);
+        ElemT diag_mult() const;
 
     public:
         matrix_t(unsigned rows, unsigned cols) : matrix_buf_t<ElemT>(rows, cols) {}
@@ -174,18 +143,32 @@ namespace matrix {
             return cols_;
         }
 
-        ElemT trace() const noexcept {
+        ElemT trace() const {
             ElemT trace = 0;
             for (unsigned i = 0, end = std::min(rows_, cols_); i < end; ++i)
                 trace += elems_[i * cols_ + i];
             return trace;
         }
 
-        ElemT determinant() requires std::is_floating_point_v<ElemT> {
+        template <typename ElemT2>
+        matrix_t(const matrix_t<ElemT2>& other)
+        requires std::is_assignable_v<ElemT&, ElemT2>
+        : matrix_buf_t<ElemT>(other.get_rows(), other.get_cols()) {
+
+            for(unsigned i = 0; i < rows_; ++i) {
+                unsigned shift_i = i * cols_;
+                for (unsigned j = 0; j < cols_; ++j) {
+                    elems_[shift_i + j] = other[i][j];
+                }
+            }
+        }
+
+        double determinant() const
+        requires std::is_assignable_v<ElemT&, double> {
             if (cols_ != rows_ || cols_ == 0 || rows_ == 0)
                 return 0;
 
-            matrix_t<ElemT> calc_matrix{*this};
+            matrix_t<double> calc_matrix{*this};
 
             bool is_swapped = false;
             for (unsigned i = 0; i < cols_; ++i) {
@@ -200,13 +183,13 @@ namespace matrix {
                 if (calc_matrix.swap_rows(i, pivot))
                     is_swapped = !is_swapped;
 
-                if (real_numbers::is_real_eq(calc_matrix[i][i], static_cast<ElemT>(0)))
+                if (real_numbers::is_real_eq(calc_matrix[i][i], static_cast<double>(0)))
                     return 0;
 
                 calc_matrix.simplify_rows(i);
             }
 
-            ElemT det = calc_matrix.diag_mult();
+            double det = calc_matrix.diag_mult();
             if (is_swapped)
                 det *= -1;
 
@@ -242,6 +225,45 @@ namespace matrix {
     };
 
     template <matrix_elem ElemT>
+    bool matrix_t<ElemT>::swap_rows(unsigned a, unsigned b)
+    noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
+                      std::is_nothrow_move_assignable_v<ElemT>)) {
+        if (a == b)
+            return false;
+
+        unsigned shift_a = a * cols_;
+        unsigned shift_b = b * cols_;
+        for (unsigned i = 0; i < cols_; ++i)
+            std::swap(elems_[shift_a + i], elems_[shift_b + i]);
+
+        return true;
+    }
+
+    template <matrix_elem ElemT>
+    void matrix_t<ElemT>::simplify_rows(unsigned i) {
+
+        unsigned shift_i = i * cols_;
+        for (unsigned j = i + 1; j < rows_; ++j) {
+            unsigned shift_j = j * cols_;
+
+            ElemT coef = elems_[shift_j + i] / elems_[shift_i + i];
+            for (unsigned k = 0; k < cols_; ++k)
+                elems_[shift_j + k] -= coef * elems_[shift_i + k];
+        }
+    }
+
+    template <matrix_elem ElemT>
+    ElemT matrix_t<ElemT>::diag_mult() const {
+        if (rows_ != cols_)
+            return 0;
+
+        ElemT det = 1;
+        for (unsigned i = 0; i < rows_; ++i)
+            det *= elems_[i * cols_ + i];
+        return det;
+    }
+
+    template <matrix_elem ElemT>
     bool operator==(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) noexcept {
         unsigned xrows = x.get_rows();
         unsigned xcols = x.get_cols();
@@ -251,8 +273,8 @@ namespace matrix {
         if ((xrows != yrows) || (xcols != ycols))
             return false;
 
-        for (unsigned i = 0; i < xrows; i++)
-            for (unsigned j = 0; j < xcols; j++)
+        for (unsigned i = 0; i < xrows; ++i)
+            for (unsigned j = 0; j < xcols; ++j)
                 if (x[i][j] != y[i][j])
                     return false;
 

@@ -78,6 +78,39 @@ TEST(Matrix_main, test_eye)
     ASSERT_LT(std::fabs(matrix.trace() - n), EPSILON);
 }
 
+TEST(Matrix_main, test_int3)
+{
+    unsigned n = 3;
+    std::vector<int> elems{11, 7,  13,
+                           17, 19, 6,
+                           7,  8,  9};
+
+    matrix::matrix_t<int> matrix{n, n, elems.begin(), elems.end()};
+
+    ASSERT_LT(std::fabs(matrix.determinant() - 615), EPSILON);
+
+    std::vector<int> elems2{31, 37, 13,
+                            19, 11, 7,
+                            43, 41, 3};
+
+    matrix::matrix_t<int> matrix2{n, n, elems2.begin(), elems2.end()};
+
+    ASSERT_LT(std::fabs(matrix2.determinant() - 5132), EPSILON);
+}
+
+TEST(Matrix_main, test_int4)
+{
+    unsigned n = 4;
+    std::vector<int> elems{31, 37, 13, 67,
+                           43, 41, 7,  93,
+                           13, 11, 3,  91,
+                           51, 53, 71, 73};
+
+    matrix::matrix_t<int> matrix{n, n, elems.begin(), elems.end()};
+
+    ASSERT_LT(std::fabs(matrix.determinant() - 1195792), EPSILON);
+}
+
 TEST(Matrix_det, test_double)
 {
     unsigned n = 3;
@@ -90,7 +123,7 @@ TEST(Matrix_det, test_double)
     ASSERT_LT(std::fabs(matrix.determinant() - (-0.036)), EPSILON);
 }
 
-TEST(Matrix_det, test_int)
+TEST(Matrix_det, test_long_double)
 {
     unsigned n1 = 4;
     long double default_value = 15;
