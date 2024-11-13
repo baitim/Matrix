@@ -23,7 +23,9 @@ std::vector<std::string> get_sorted_files(std::filesystem::path path) {
 
 TEST(Matrix_shuffle, end_to_end) 
 {
-    std::filesystem::path dir = "../../tests/";
+    std::string file{__FILE__};
+    std::filesystem::path dir = file.substr(0, file.rfind("/"));
+
     std::filesystem::path answers_path = dir / "answers/";
     std::filesystem::path tests_path   = dir / "tests_dat/";
 
