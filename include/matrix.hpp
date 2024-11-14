@@ -263,6 +263,25 @@ namespace matrix {
     }
 
     template <matrix_elem ElemT>
+    matrix_t<ElemT> operator*(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) {
+        unsigned row1 = x.get_rows();
+        unsigned col1 = x.get_cols();
+        unsigned col2 = y.get_cols();
+
+        matrix_t<ElemT> res{row1, col2, 0};
+        for (unsigned i = 0; i < row1; ++i) {
+            for (unsigned j = 0; j < col2; ++j) {
+                ElemT& res_ij = res[i][j];
+                for (unsigned k = 0; k < col1; ++k) {
+                    res_ij += x[i][k] * y[k][j];
+                }
+            }
+        }
+
+        return res;
+    }
+
+    template <matrix_elem ElemT>
     bool operator==(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) noexcept {
         unsigned xrows = x.get_rows();
         unsigned xcols = x.get_cols();

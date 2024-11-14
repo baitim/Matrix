@@ -113,6 +113,33 @@ TEST(Matrix_main, test_int4)
     ASSERT_LT(std::fabs(matrix.determinant() - 1195792), EPSILON);
 }
 
+TEST(Matrix_mult, test_ints)
+{
+    unsigned n = 4;
+    unsigned m = 3;
+    unsigned k = 5;
+
+    std::vector<int> elems1{1,  3,  7,
+                            11, 13, 17,
+                            19, 23, 29,
+                            31, 37, 41};
+
+    std::vector<int> elems2{2, 9, 15, 19, 21,
+                            6, 7, 12, 11, 37,
+                            5, 3, 51, 17, 33};
+
+    std::vector<int> elems3{55,  51,  408,  171,  363,
+                            185, 241, 1188, 641,  1273,
+                            321, 419, 2040, 1107, 2207,
+                            489, 661, 3000, 1693, 3373};
+
+    matrix::matrix_t<int> matrix1{n, m, elems1.begin(), elems1.end()};
+    matrix::matrix_t<int> matrix2{m, k, elems2.begin(), elems2.end()};
+    matrix::matrix_t<int> matrix3{n, k, elems3.begin(), elems3.end()};
+
+    ASSERT_EQ(matrix1 * matrix2, matrix3);
+}
+
 TEST(Matrix_det, test_double)
 {
     unsigned n = 3;
