@@ -210,7 +210,7 @@ namespace matrix {
         }
 
         std::ostream& print(std::ostream& os) const {
-            os << print_lblue("\nMatrix[" << cols_  << "x" << rows_ << "]:\n");
+            os << print_lblue("\nMatrix[" << rows_  << "x" << cols_ << "]:\n");
             for (unsigned i = 0; i < rows_; ++i) {
                 unsigned shift_i = i * cols_;
                 for (unsigned j = 0; j < cols_; ++j) {
