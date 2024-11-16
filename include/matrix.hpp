@@ -221,6 +221,10 @@ namespace matrix {
             os << "\n";
             return os;
         }
+
+        operator bool() const {
+            return rows_ && cols_;
+        }
     };
 
     template <matrix_elem ElemT>
