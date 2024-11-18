@@ -35,9 +35,10 @@ namespace matrix {
 
         matrix_buf_t(unsigned rows, unsigned cols, const ElemT& val)
         requires std::is_assignable_v<ElemT&, ElemT> : matrix_buf_t<ElemT>(rows, cols) {
-            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
+            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i) {
                 elems_[i] = val;
-            used_ = rows_ * cols_;
+                used_++;
+            }
         }
 
         template <typename It>
@@ -45,16 +46,18 @@ namespace matrix {
         requires std::is_assignable_v<ElemT&, typename It::value_type> : matrix_buf_t<ElemT>(rows, cols) {
             unsigned i = 0;
             unsigned end = rows * cols;
-            for (It it = start; it < fin && i < end; ++it, ++i)
+            for (It it = start; it < fin && i < end; ++it, ++i) {
                 elems_[i] = *it;
-            used_ = i;
+                used_++;
+            }
         }
 
         matrix_buf_t(const matrix_buf_t<ElemT>& other)
         requires std::is_copy_constructible_v<ElemT> : matrix_buf_t<ElemT>(other.rows_, other.cols_) {
-            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i)
+            for (unsigned i = 0, end = rows_ * cols_; i < end; ++i) {
                 new (elems_ + i) ElemT(other.elems_[i]);
-            used_ = rows_ * cols_;
+                used_++;
+            }
         }
 
         matrix_buf_t& operator=(const matrix_buf_t<ElemT>& other) {
