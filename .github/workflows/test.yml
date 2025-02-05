@@ -8,7 +8,7 @@ on:
       - main
 jobs:
   main:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu:noble-20241015
     defaults:
       run:
         shell: bash
@@ -24,6 +24,9 @@ jobs:
         #   run: pip install pipreqs;
         #       pipreqs --force .;
         #       pip install -r requirements.txt
+
+        - name: install uv
+          uses: astral-sh/setup-uv@v5
 
         - name: set common environment
           run: |
