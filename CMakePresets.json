@@ -1,0 +1,29 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 11
+    },
+    "configurePresets": [
+      {
+        "name": "debug",
+        "description": "CMake debug config",
+        "hidden": false,
+        "generator": "Unix Makefiles",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_CXX_FLAGS_DEBUG": "-Wall -g -O0 -fsanitize=address -fsanitize=undefined"
+        }
+      },
+      {
+        "name": "release",
+        "description": "CMake release config",
+        "hidden": false,
+        "generator": "Unix Makefiles",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_CXX_FLAGS_DEBUG": "-O3"
+        }
+      }
+    ]
+  }

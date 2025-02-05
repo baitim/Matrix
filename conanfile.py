@@ -44,4 +44,4 @@ class matrixRecipe(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = ["matrix"]
+        self.cpp_info.libs = ["Matrix"]

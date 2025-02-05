@@ -1,4 +1,4 @@
-#include "matrix.hpp"
+#include "Matrix/matrix.hpp"
 
 #include <gtest/gtest.h>
 
@@ -240,4 +240,10 @@ TEST(Matrix_raii, test_move_assign_ctor)
 
     ASSERT_LT(std::fabs(matrix1.determinant() - (-3.075)), EPSILON);
     ASSERT_LT(std::fabs(matrix2.determinant() - 0), EPSILON);
+}
+
+int main(int argc, char **argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

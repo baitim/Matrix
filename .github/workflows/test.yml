@@ -35,9 +35,8 @@ jobs:
 
       - name: CMake release config
         run: |
-          conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release;
-          cmake . -B build -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake \
-                            -DCMAKE_BUILD_TYPE=Release;
+          conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release
+          cmake . -B build --preset release
           cmake --build build
 
       - name: CMake release test
@@ -48,9 +47,8 @@ jobs:
 
       - name: CMake debug config
         run: |
-          conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug;
-          cmake . -B build -DCMAKE_TOOLCHAIN_FILE=build/Debug/generators/conan_toolchain.cmake \
-                            -DCMAKE_BUILD_TYPE=Debug;
+          conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug
+          cmake . -B build --preset debug
           cmake --build build
 
       - name: CMake debug test
