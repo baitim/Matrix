@@ -1,2 +1,3 @@
-version = 1
-requires-python = ">=3.11"
+uv venv
+uv sync
+source .venv/bin/activate
