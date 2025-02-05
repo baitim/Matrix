@@ -43,6 +43,9 @@ jobs:
         - name: CMake release test
           run: ctest --test-dir build --rerun-failed --output-on-failure
 
+        - name: clear build after release test
+          run: rm -rf build
+
         - name: CMake debug config
           run: |
             conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug;
