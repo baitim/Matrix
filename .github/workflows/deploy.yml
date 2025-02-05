@@ -10,13 +10,9 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v3
-
+        
       - name: upload conan package to server
-        uses: appleboy/ssh-action@master
-        with:
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: |
-            conan remote add conan_packages http://188.225.84.75:9300;
-            conan remote login conan_packages;
+        run: |
+            conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }};
+            conan remote login conan_packages -u ${{ secrets.CONAN_USERNAME }} -p ${{ secrets.CONAN_PASSWORD }};
             conan upload matrix/1.0@ --remote conan_packages
