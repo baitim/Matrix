@@ -16,12 +16,11 @@ class matrixRecipe(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
+    requires = "gtest/1.15.0"
+    default_options = {"gtest:shared": True}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*", "tests/*"
-
-    def requirements(self):
-        self.requires("gtest/1.15.0")
 
     def config_options(self):
         if self.settings.os == "Windows":
