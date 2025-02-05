@@ -16,28 +16,24 @@ jobs:
         - name: checkout repository
           uses: actions/checkout@v3
 
-        # - name: set python
-        #   uses: actions/setup-python@v4
-        #   with:
-        #     python-version: '3.11'
-        # - name: install python requirements
-        #   run: pip install pipreqs;
-        #       pipreqs --force .;
-        #       pip install -r requirements.txt
-
         - name: install uv
           uses: astral-sh/setup-uv@v5
 
         - name: set common environment
           run: |
             uv venv
-            uv pip install conan
             source .venv/bin/activate
-            conan profile detect --force
             uv sync
             {
               echo "VIRTUAL_ENV=$VIRTUAL_ENV"
             } >> "$GITHUB_ENV"
+        
+        - name: install conan
+          run: |
+            uv pip install conan
+            source .venv/bin/activate
+            echo "$(uv venv path)/bin" >> $GITHUB_PATH
+            conan profile detect --force
 
         - name: CMake release config
           run: |
