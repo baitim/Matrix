@@ -36,17 +36,26 @@ jobs:
             {
               echo "VIRTUAL_ENV=$VIRTUAL_ENV"
             } >> "$GITHUB_ENV"
+        
+        - name: install conan
+          run: |
+            uv pip install conan
+            conan profile detect --force
 
         - name: CMake release config
-          run:  conan install . --build=missing s compiler.cppstd=gnu20 -s build_type=Release;
-                cmake . -B build -DCMAKE_BUILD_TYPE=Release;
-                cmake --build build
+          run: |
+            conan install . --build=missing s compiler.cppstd=gnu20 -s build_type=Release;
+            cmake . -B build -DCMAKE_BUILD_TYPE=Release;
+            cmake --build build
+
         - name: CMake release test
           run: ctest --test-dir build --rerun-failed --output-on-failure
 
         - name: CMake debug config
-          run:  conan install . --build=missing s compiler.cppstd=gnu20 -s build_type=Debug;
-                cmake . -B build -DCMAKE_BUILD_TYPE=Debug;
-                cmake --build build
+          run: |
+            conan install . --build=missing s compiler.cppstd=gnu20 -s build_type=Debug;
+            cmake . -B build -DCMAKE_BUILD_TYPE=Debug;
+            cmake --build build
+
         - name: CMake debug test
           run: ctest --test-dir build --rerun-failed --output-on-failure
