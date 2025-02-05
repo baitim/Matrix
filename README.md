@@ -20,11 +20,12 @@
     <code>conan profile detect --force</code>
 
 4. Init dependencies <br>
-    <code>conan install . --build=missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True -s compiler.cppstd=gnu20</code> <br>
+    <code>conan install . --build=missing -s compiler.cppstd=gnu20</code><br>
     maybe you will need these flags for the conan <code>-s build_type=Debug</code>
 
 5. Build <br>
-    <code>cmake . -B build -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake; cmake --build build</code>
+    <code>cmake . -B build -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake;</code><br>
+    <code>cmake --build build</code>
 
 6. Run <br>
     <code>./build/src/matrix</code>
