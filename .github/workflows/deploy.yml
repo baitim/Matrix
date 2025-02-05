@@ -27,11 +27,12 @@ jobs:
         run: |
           pip install conan
           conan profile detect --force
-            
+          conan install . -s compiler.cppstd=gnu20 -s build_type=Release;
+
       - name: upload conan package to server
         run: |
-            conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }};
-            CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
-            echo -e "$CONAN_VISITOR" | conan remote login conan_packages
-            conan create .
-            conan upload matrix/1.0@ --remote conan_packages
+          conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }};
+          CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
+          echo -e "$CONAN_VISITOR" | conan remote login conan_packages
+          conan create .
+          conan upload matrix/1.0@ --remote conan_packages
