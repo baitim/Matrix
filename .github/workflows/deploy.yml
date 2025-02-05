@@ -1,0 +1,25 @@
+name: Matrix post-push
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: CMake release config
+      run:  conan install . --build=missing s compiler.cppstd=gnu20 -s build_type=Release;
+            cmake . -B build -DCMAKE_BUILD_TYPE=Release;
+            cmake --build build
+
+    - name: upload conan package to server
+      uses: appleboy/ssh-action@master
+      with:
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        script: conan remote add conan_packages http://188.225.84.75:9300;
+                conan remote login conan_packages;
+                conan upload matrix/1.0@ --remote conan_packages
