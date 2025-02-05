@@ -31,5 +31,7 @@ jobs:
       - name: upload conan package to server
         run: |
             conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }};
+            CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
+            echo -e "$CONAN_VISITOR" | conan remote login conan_packages
             conan remote login conan_packages -u ${{ secrets.CONAN_USERNAME }} -p ${{ secrets.CONAN_PASSWORD }};
             conan upload matrix/1.0@ --remote conan_packages
