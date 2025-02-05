@@ -8,7 +8,7 @@ on:
       - main
 jobs:
   main:
-    runs-on: ubuntu-noble-20241015
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
