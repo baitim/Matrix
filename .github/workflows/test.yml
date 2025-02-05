@@ -32,6 +32,9 @@ jobs:
           run: |
             uv pip install conan
             echo "$(uv venv path)/bin" >> $GITHUB_PATH
+            CONAN_PATH="$(uv venv path)/bin"
+            echo "$CONAN_PATH" >> $GITHUB_PATH
+            export PATH="$CONAN_PATH:$PATH"
             conan profile detect --force
 
         - name: CMake release config
