@@ -39,7 +39,7 @@ jobs:
         
         - name: install conan
           run: |
-            uv pip install conan
+            uv pip install --system conan
             conan profile detect --force
 
         - name: CMake release config
