@@ -4,6 +4,10 @@
 
  Implementation of the matrix.
 
+## How to integrate
+ 
+ use my [storage](https://github.com/baitim/ConanPackages), project = "matrix", version = "1.0"
+
 ## How to run
 
 1. Clone <br>
