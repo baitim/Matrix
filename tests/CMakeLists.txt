@@ -11,7 +11,7 @@ target_sources(unit_matrix
     FILE_SET HEADERS
     BASE_DIRS ${INCLUDE_DIR}
 )
-target_link_libraries(unit_matrix PRIVATE GTest::GTest)
+target_link_libraries(unit_matrix PRIVATE gtest::gtest)
 
 set(RUN_TESTS ./unit_matrix --gtest_color=yes)
 add_test(
