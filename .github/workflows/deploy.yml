@@ -1,15 +1,16 @@
 name: Matrix post-push
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Run tests"]
+    branches: ["main"]
+    types: [completed]
 jobs:
   main:
     runs-on: ubuntu-latest
 
     steps:
       - name: checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: install uv
         uses: astral-sh/setup-uv@v5
