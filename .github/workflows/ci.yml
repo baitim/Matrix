@@ -74,7 +74,7 @@ jobs:
             echo "VIRTUAL_ENV=$VIRTUAL_ENV"
           } >> "$GITHUB_ENV"
       
-      - name: install conan
+      - name: install & setup conan
         run: |
           pip install conan
           conan profile detect --force
@@ -82,16 +82,16 @@ jobs:
           CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
           echo -e "$CONAN_VISITOR" | conan remote login conan_packages
 
-      - name: create release conan package to server
+      - name: create release conan package
         run: |
           conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release
           conan create . --build=missing -s build_type=Release
 
-      - name: create debug conan package to server
+      - name: create debug conan package
         run: |
           conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug
           conan create . --build=missing -s build_type=Debug
 
-      - name: upload conan packageы to server
+      - name: upload conan packages to server
         run: |
           conan upload matrix/1.0@ --remote conan_packages
