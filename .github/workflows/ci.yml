@@ -1,11 +1,11 @@
-name: Run tests
+name: Matrix pre-commit and post-push
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -51,3 +51,42 @@ jobs:
 
       - name: CMake debug test
         run: ctest --test-dir build --rerun-failed --output-on-failure
+
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: set common environment
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv sync
+          {
+            echo "VIRTUAL_ENV=$VIRTUAL_ENV"
+          } >> "$GITHUB_ENV"
+      
+      - name: install conan
+        run: |
+          pip install conan
+          conan profile detect --force
+        
+      - name: create conan package
+        run: |
+            conan install . --build=missing -s compiler.cppstd=gnu20
+            conan create . --build=missing
+            
+      - name: upload conan package to server
+        run: |
+            conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }}
+            CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
+            echo -e "$CONAN_VISITOR" | conan remote login conan_packages
+            conan upload matrix/1.0@ --remote conan_packages
