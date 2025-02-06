@@ -36,7 +36,7 @@ jobs:
       - name: CMake release config
         run: |
           conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release
-          cmake . -B build --preset conan-release
+          cmake . -B build --preset release
           cmake --build build
 
       - name: CMake release test
