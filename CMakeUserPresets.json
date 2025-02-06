@@ -11,8 +11,6 @@
         "hidden": false,
         "generator": "Unix Makefiles",
         "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Debug",
-          "DCMAKE_TOOLCHAIN_FILE": "build/Debug/generators/conan_toolchain.cmake",
           "CMAKE_CXX_FLAGS_DEBUG": "-Wall -g -O0 -fsanitize=address -fsanitize=undefined"
         }
       },
@@ -22,9 +20,6 @@
         "hidden": false,
         "generator": "Unix Makefiles",
         "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Release",
-          "DCMAKE_TOOLCHAIN_FILE": "build/Release/generators/conan_toolchain.cmake",
-          "CMAKE_CXX_FLAGS_DEBUG": "-O3"
         }
       }
     ]
