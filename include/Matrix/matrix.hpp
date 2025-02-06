@@ -30,7 +30,11 @@ namespace matrix {
                        // can precalculate shift of rows index like shift_i = i * N, then m[shift_i + j]
 
         matrix_buf_t(unsigned rows, unsigned cols) : rows_(rows), cols_(cols) {
-            elems_ = (ElemT*) ::operator new (sizeof(ElemT) * rows_ * cols_);
+            if (rows_ > 0 && cols_ > 0) {
+                elems_ = (ElemT*) ::operator new (sizeof(ElemT) * rows_ * cols_);
+            } else {
+                elems_ = nullptr;
+            }
         }
 
         matrix_buf_t(unsigned rows, unsigned cols, const ElemT& val)
