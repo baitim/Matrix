@@ -24,7 +24,7 @@
     maybe you will need these flags for the conan <code>-s build_type=Debug</code>
 
 5. Build <br>
-    <code>cmake . -B build --preset release</code><br>
+    <code>cmake --preset release</code><br>
     <code>cmake --build build</code>
 
 6. Run <br>
