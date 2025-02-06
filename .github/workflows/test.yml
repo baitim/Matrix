@@ -1,13 +1,11 @@
 name: Run tests
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 jobs:
-  main:
+  tests:
     runs-on: ubuntu-latest
     defaults:
       run:
