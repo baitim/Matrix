@@ -28,7 +28,7 @@
     <code>cmake --build build/Release</code>
 
 6. Run <br>
-    <code>./build/src/matrix</code>
+    <code>./build/Release/src/matrix</code>
 
 ## How to test
 
