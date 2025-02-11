@@ -44,7 +44,7 @@ jobs:
         run: |
           conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug
           cmake --preset debug
-          cmake --build build/Deubg
+          cmake --build build/Debug
 
       - name: CMake debug test
         run: ctest --test-dir build/Debug --rerun-failed --output-on-failure
