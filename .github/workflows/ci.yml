@@ -35,22 +35,19 @@ jobs:
         run: |
           conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release
           cmake --preset release
-          cmake --build build
+          cmake --build build/Release
 
       - name: CMake release test
-        run: ctest --test-dir build --rerun-failed --output-on-failure
-
-      - name: clear build after release test
-        run: rm -rf build
+        run: ctest --test-dir build/Release --rerun-failed --output-on-failure
 
       - name: CMake debug config
         run: |
           conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug
           cmake --preset debug
-          cmake --build build
+          cmake --build build/Deubg
 
       - name: CMake debug test
-        run: ctest --test-dir build --rerun-failed --output-on-failure
+        run: ctest --test-dir build/Debug --rerun-failed --output-on-failure
 
 
   deploy:

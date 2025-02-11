@@ -10,7 +10,7 @@
         "description": "CMake debug config",
         "hidden": false,
         "generator": "Unix Makefiles",
-        "binaryDir": "${sourceDir}/build",
+        "binaryDir": "${sourceDir}/build/Debug",
         "cacheVariables": {
           "CMAKE_BUILD_TYPE": "Debug",
           "CMAKE_CXX_FLAGS_DEBUG": "-Wall -g -O0 -fsanitize=address -fsanitize=undefined",
@@ -22,7 +22,7 @@
         "description": "CMake release config",
         "hidden": false,
         "generator": "Unix Makefiles",
-        "binaryDir": "${sourceDir}/build",
+        "binaryDir": "${sourceDir}/build/Release",
         "cacheVariables": {
             "CMAKE_BUILD_TYPE": "Release",
             "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/Release/generators/conan_toolchain.cmake"

@@ -25,7 +25,7 @@
 
 5. Build <br>
     <code>cmake --preset release</code><br>
-    <code>cmake --build build</code>
+    <code>cmake --build build/Release</code>
 
 6. Run <br>
     <code>./build/src/matrix</code>
@@ -34,7 +34,7 @@
 
 * Testing
     - End to end & Unit<br>
-        <code>ctest --test-dir build --output-on-failure</code>
+        <code>ctest --test-dir build/Release --output-on-failure</code>
 
 <p align="center"><img src="https://github.com/baitim/Matrix/blob/main/images/cat.gif" width="40%"></p>
 
