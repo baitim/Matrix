@@ -1,9 +1,9 @@
 import random
 import math
-import os
 import numpy
+from pathlib import Path
 
-to_curr_dir = os.path.dirname(os.path.realpath(__file__))
+tests_dir = str(Path(__file__).parent)
 
 count_tests = 10
 max_determinant = 1000000
@@ -55,13 +55,13 @@ for test_num in range(count_tests) :
     matrix_numpy1D = numpy.array(matrix)
     matrix_numpy2D = numpy.reshape(matrix_numpy1D, (-1, N))
 
-    file_name = to_curr_dir + "/answers/answer_" + f'{test_num+1:03}' + ".ans"
+    file_name = tests_dir + "/answers/answer_" + f'{test_num+1:03}' + ".ans"
     file = open(file_name, 'w')
     file.write(str(numpy.linalg.det(matrix_numpy2D))) # numpy for more accuracy (we loose a lot in shuffling diagonals)
     file.close()
 
     # write matrix
-    file_name = to_curr_dir + "/tests_dat/test_" + f'{test_num+1:03}' + ".in"
+    file_name = tests_dir + "/tests_dat/test_" + f'{test_num+1:03}' + ".in"
     file = open(file_name, 'w')
     test_str = str(N) + " " + "\n"
 
