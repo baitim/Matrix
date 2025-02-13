@@ -21,7 +21,6 @@ jobs:
         run: |
           uv sync --group dev
           source .venv/bin/activate
-          uv sync
           {
             echo "VIRTUAL_ENV=$VIRTUAL_ENV"
           } >> "$GITHUB_ENV"
@@ -64,9 +63,7 @@ jobs:
       - name: set common environment
         run: |
           uv sync --group dev
-          uv pip install --group dev
           source .venv/bin/activate
-          uv sync
           {
             echo "VIRTUAL_ENV=$VIRTUAL_ENV"
           } >> "$GITHUB_ENV"
