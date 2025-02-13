@@ -6,7 +6,7 @@
 
 ## How to integrate
  
- use [storage](https://github.com/baitim/ConanPackages), project = "matrix", version = "1.0"
+ use [storage](https://github.com/baitim/ConanPackages), project = "matrix", version = "1.0", user = "baitim"
 
 ## How to run
 
@@ -17,6 +17,7 @@
     <code>cd Matrix</code>
 
 3. Prepare conan <br>
+    conan installation: <code>uv sync; source .venv/bin/activate</code><br>
     <code>conan profile detect --force</code>
 
 4. Init dependencies <br>

@@ -19,7 +19,7 @@ jobs:
 
       - name: set common environment
         run: |
-          uv venv
+          uv sync
           source .venv/bin/activate
           uv sync
           {
@@ -28,7 +28,6 @@ jobs:
       
       - name: install conan
         run: |
-          pip install conan
           conan profile detect --force
 
       - name: CMake release config
@@ -64,7 +63,7 @@ jobs:
 
       - name: set common environment
         run: |
-          uv venv
+          uv sync
           source .venv/bin/activate
           uv sync
           {
@@ -73,22 +72,16 @@ jobs:
       
       - name: install & setup conan
         run: |
-          pip install conan
           conan profile detect --force
           conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }}
           CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
           echo -e "$CONAN_VISITOR" | conan remote login conan_packages
 
-      - name: create release conan package
+      - name: create conan package
         run: |
-          conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release
           conan create . --build=missing -s build_type=Release
-
-      - name: create debug conan package
-        run: |
-          conan install . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug
           conan create . --build=missing -s build_type=Debug
 
       - name: upload conan packages to server
         run: |
-          conan upload matrix/1.0@ --remote conan_packages
+          conan upload matrix/1.0@baitim --remote conan_packages
