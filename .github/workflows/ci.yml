@@ -26,9 +26,8 @@ jobs:
             echo "VIRTUAL_ENV=$VIRTUAL_ENV"
           } >> "$GITHUB_ENV"
       
-      - name: install conan
+      - name: setup conan
         run: |
-          pip install conan
           conan profile detect --force
 
       - name: CMake release config
@@ -37,7 +36,7 @@ jobs:
           cmake --preset release
           cmake --build build/Release
 
-      - name: CMake release test
+      - name: CMake release tesinstallt
         run: ctest --test-dir build/Release --rerun-failed --output-on-failure
 
       - name: CMake debug config
@@ -71,9 +70,8 @@ jobs:
             echo "VIRTUAL_ENV=$VIRTUAL_ENV"
           } >> "$GITHUB_ENV"
       
-      - name: install & setup conan
+      - name: setup conan
         run: |
-          pip install conan
           conan profile detect --force
           conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }}
           CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
