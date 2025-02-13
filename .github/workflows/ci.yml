@@ -19,6 +19,7 @@ jobs:
 
       - name: set common environment
         run: |
+          uv sync
           source .venv/bin/activate
           uv sync
           {
@@ -27,6 +28,7 @@ jobs:
       
       - name: install conan
         run: |
+          pip install conan
           conan profile detect --force
 
       - name: CMake release config
@@ -62,6 +64,7 @@ jobs:
 
       - name: set common environment
         run: |
+          uv sync
           source .venv/bin/activate
           uv sync
           {
@@ -70,6 +73,7 @@ jobs:
       
       - name: install & setup conan
         run: |
+          pip install conan
           conan profile detect --force
           conan remote add conan_packages ${{ secrets.CONAN_ADDRESS }}
           CONAN_VISITOR="${{ secrets.CONAN_USERNAME }}\n${{ secrets.CONAN_PASSWORD }}"
