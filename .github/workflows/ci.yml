@@ -38,7 +38,7 @@ jobs:
           cmake --preset release
           cmake --build build/Release
 
-      - name: CMake release tesinstallt
+      - name: CMake release test
         run: ctest --test-dir build/Release --rerun-failed --output-on-failure
 
       - name: CMake debug config
