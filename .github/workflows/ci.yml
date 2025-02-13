@@ -19,8 +19,7 @@ jobs:
 
       - name: set common environment
         run: |
-          uv sync
-          uv pip install --group dev
+          uv sync --group dev
           source .venv/bin/activate
           uv sync
           {
@@ -64,7 +63,7 @@ jobs:
 
       - name: set common environment
         run: |
-          uv sync
+          uv sync --group dev
           uv pip install --group dev
           source .venv/bin/activate
           uv sync

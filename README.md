@@ -17,7 +17,7 @@
     <code>cd Matrix</code>
 
 3. Prepare conan <br>
-    conan installation: <code>uv sync; source .venv/bin/activate</code><br>
+    <code>uv sync --group dev; source .venv/bin/activate</code><br>
     <code>conan profile detect --force</code>
 
 4. Init dependencies <br>
