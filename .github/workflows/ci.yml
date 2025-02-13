@@ -19,7 +19,6 @@ jobs:
 
       - name: set common environment
         run: |
-          uv sync
           source .venv/bin/activate
           uv sync
           {
@@ -63,7 +62,6 @@ jobs:
 
       - name: set common environment
         run: |
-          uv sync
           source .venv/bin/activate
           uv sync
           {
