@@ -44,9 +44,6 @@ class matrixRecipe(ConanFile):
         cmake = CMake(self)
         cmake.install()
 
-    def package_id(self):
-        self.info.settings.compiler.cppstd = "gnu20" 
-
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "config")
         self.cpp_info.set_property("cmake_file_name", "Matrix")
