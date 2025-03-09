@@ -13,8 +13,6 @@ class matrixRecipe(ConanFile):
     description = "matrix"
     topics = ""
 
-    revision_mode = "hash"
-
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}

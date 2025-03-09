@@ -75,9 +75,9 @@ jobs:
 
       - name: create conan package
         run: |
-          conan create . --build=missing -s build_type=Release
-          conan create . --build=missing -s build_type=Debug
+          conan create . -s compiler.cppstd=gnu20 --build=missing -s build_type=Release
+          conan create . -s compiler.cppstd=gnu20 --build=missing -s build_type=Debug
 
       - name: upload conan packages to server
         run: |
-          conan upload matrix/1.0@baitim --remote conan_packages --force
+          conan upload matrix/1.1@baitim --remote conan_packages
