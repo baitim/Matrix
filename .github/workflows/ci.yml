@@ -75,8 +75,8 @@ jobs:
 
       - name: create conan package
         run: |
-          conan create . --build=missing -s build_type=Release
-          conan create . --build=missing -s build_type=Debug
+          conan create . --build=missing -s compiler.cppstd=gnu20 -s build_type=Release
+          conan create . --build=missing -s compiler.cppstd=gnu20 -s build_type=Debug
 
       - name: upload conan packages to server
         run: |
