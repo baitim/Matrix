@@ -11,7 +11,7 @@
 
 namespace matrix {
     template <typename ElemT>
-    concept matrix_elem = requires(ElemT elem) {
+    concept matrix_elem_t = requires(ElemT elem) {
         requires std::is_assignable_v<ElemT&, ElemT>;
         {elem + elem} -> std::convertible_to<ElemT>;
         {elem - elem} -> std::convertible_to<ElemT>;
@@ -97,7 +97,7 @@ namespace matrix {
         }
     };
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     class matrix_t final : private matrix_buf_t<ElemT> {
         using matrix_buf_t<ElemT>::rows_;
         using matrix_buf_t<ElemT>::cols_;
@@ -233,7 +233,7 @@ namespace matrix {
         }
     };
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     bool matrix_t<ElemT>::swap_rows(unsigned a, unsigned b)
     noexcept(noexcept(std::is_nothrow_move_constructible_v<ElemT> &&
                       std::is_nothrow_move_assignable_v<ElemT>)) {
@@ -248,7 +248,7 @@ namespace matrix {
         return true;
     }
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     void matrix_t<ElemT>::simplify_rows(unsigned i) {
 
         unsigned shift_i = i * cols_;
@@ -261,7 +261,7 @@ namespace matrix {
         }
     }
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     ElemT matrix_t<ElemT>::diag_mult() const {
         if (rows_ != cols_)
             return 0;
@@ -272,7 +272,7 @@ namespace matrix {
         return det;
     }
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     matrix_t<ElemT> operator*(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) {
         unsigned row1 = x.get_rows();
         unsigned col1 = x.get_cols();
@@ -291,7 +291,7 @@ namespace matrix {
         return res;
     }
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     bool operator==(const matrix_t<ElemT>& x, const matrix_t<ElemT>& y) noexcept {
         unsigned xrows = x.get_rows();
         unsigned xcols = x.get_cols();
@@ -309,12 +309,12 @@ namespace matrix {
         return true;
     }
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     std::istream& operator>>(std::istream& is, matrix_t<ElemT>& matrix) {
         return matrix.load(is);
     }
 
-    template <matrix_elem ElemT>
+    template <matrix_elem_t ElemT>
     std::ostream& operator<<(std::ostream& os, const matrix_t<ElemT>& matrix) {
         return matrix.print(os);
     }
