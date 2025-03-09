@@ -80,4 +80,4 @@ jobs:
 
       - name: upload conan packages to server
         run: |
-          conan upload matrix/1.0@baitim --remote conan_packages
+          conan upload matrix/1.0@baitim --remote conan_packages --force
